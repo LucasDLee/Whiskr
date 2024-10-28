@@ -1,0 +1,132 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+
+* {
+  font-family: 'IBM Plex Sans', 'Rubik';
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}
+
+.heroSection {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 9rem 0.75rem;
+}
+
+.heroTitle {
+  font-size: 3rem;
+  font-weight: 700;
+}
+
+.heroSubtitle, .featureDescription, .featureCardDescription {
+  color: hsl(215.4 16.3% 46.9);
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.featureDescription {
+  font-size: 1.125rem;
+}
+
+.featureCardDescription {
+  font-size: 1rem;
+}
+
+.featuresSection {
+  align-items: center;
+  background-color: hsl(210 40% 96.1%);
+  border-color: hsl(214.3 31.8% 91.4%);
+  display: flex;
+  flex-direction: column;
+  padding: 4rem 0.75rem;
+}
+
+.featureSeparator {
+  margin-bottom: 3rem;
+  max-width: 768px;
+}
+
+.featureSeparator>* {
+  text-align: center;
+}
+
+.featureHeader {
+  color: #af88dc;
+  font-weight: 700;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  border-color: hsl(214.3 31.8% 91.4%);
+}
+
+.featureSubheader {
+  font-weight: 700;
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+.featureGrid {
+  border: hsl(214.3 31.8% 91.4%);
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0px, 1fr));
+  row-gap: 2rem;
+  column-gap: 0.75rem;
+}
+
+.featureGridMax {
+  margin: auto;
+  max-width: 1024px;
+}
+
+.featureCard {
+  padding: 1.25rem;
+  background-color: hsl(0 0% 100%);
+  border-color: hsl(214.3 31.8% 91.4%);
+  border-width: 1px;
+  border-radius: 0.75rem;
+  box-shadow: 0px 0px 2.5px black;
+  padding: 1.25rem;
+}
+
+.featureCardIcon {
+  background: linear-gradient(135deg, rgba(192,132,252,1) 0%, rgba(244,114,182,1) 100%);
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  height: 3rem;
+  width: 3rem;
+}
+
+.featureCardTitle {
+  font-weight: 700;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  margin-top: 0.5rem;
+}
+
+.featureCardLine {
+  display: block;
+  border-top-width: 1px;
+  width: 2rem;
+  border-color: rgb(192 132 252);
+  border-style: solid;
+  margin: 0.75rem 0;
+}
+
+.footerSection {
+  padding: 0 0.75rem 4rem;
+}
+
+.footerDescription {
+  border-top: 1px solid lightgray;
+  color: hsl(215.4 16.3% 46.9);
+  text-align: center;
+  margin-top: 3rem;
+  padding: 1rem 0;
+}
+
+.footerDescription a {
+  color: rgb(59 130 246 / 1)
+}
