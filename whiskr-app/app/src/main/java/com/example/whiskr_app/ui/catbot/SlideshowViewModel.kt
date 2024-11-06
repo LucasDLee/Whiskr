@@ -1,4 +1,4 @@
-package com.example.whiskr_app.ui.slideshow
+package com.example.whiskr_app.ui.catbot
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
