@@ -6,4 +6,5 @@ data class Cat (
     val age: Int,
     val sex: String,
     val breed: String,
+    val distance: Double,
 )

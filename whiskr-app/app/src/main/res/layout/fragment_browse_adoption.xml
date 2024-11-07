@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -44,7 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            />
+        />
         <Spinner
             android:id="@+id/fragmentBrowseAdoptionSpinnerDistance"
             android:layout_width="match_parent"
@@ -53,11 +54,26 @@
             />
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:background="@color/cardview_dark_background"
+    />
 
     <ListView
         android:id="@+id/fragmentBrowseAdoptionListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-    />
+        android:divider="@drawable/divider"
+        android:dividerHeight="8dp"
+        android:background="@color/cardview_dark_background"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:background="@color/cardview_dark_background"
+        />
 </LinearLayout>

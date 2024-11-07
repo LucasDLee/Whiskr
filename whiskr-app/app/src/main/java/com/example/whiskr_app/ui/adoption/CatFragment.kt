@@ -46,8 +46,6 @@ class CatFragment : Fragment() {
         createBreedSpinner(view)
         createDistanceSpinner(view)
         createSexSpinner(view)
-
-
     }
 
     private fun createSexSpinner(view: View) {
@@ -70,8 +68,8 @@ class CatFragment : Fragment() {
                 view: View?,
                 position: Int,
                 id: Long) {
-                val selectedAgeOption = sexOptions[position]
-                catViewModel.filterCatsByAge(selectedAgeOption)
+                val selectedSexOption = sexOptions[position]
+                catViewModel.filterCatsBySex(selectedSexOption)
             }
 
             override fun onNothingSelected(
@@ -99,8 +97,8 @@ class CatFragment : Fragment() {
                 view: View?,
                 position: Int,
                 id: Long) {
-                val selectedAgeOption = distanceOptions[position]
-                catViewModel.filterCatsByAge(selectedAgeOption)
+                val selectedDistanceOption = distanceOptions[position]
+                catViewModel.filterCatsByDistance(selectedDistanceOption)
             }
 
             override fun onNothingSelected(
@@ -111,8 +109,7 @@ class CatFragment : Fragment() {
 
     private fun createBreedSpinner(view: View) {
         breedSpinner = view.findViewById(R.id.fragmentBrowseAdoptionSpinnerBreed)
-        val catViewModel = CatViewModel()
-        val breedOptions = catViewModel.getCatBreeds()
+        val breedOptions = listOf("Breed", "All", "Manx", "Siamese", "Domestic Longhair", "Bengal")
         val spinnerAdapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_list_item_1,
@@ -129,8 +126,8 @@ class CatFragment : Fragment() {
                 view: View?,
                 position: Int,
                 id: Long) {
-                val selectedAgeOption = breedOptions[position]
-                catViewModel.filterCatsByAge(selectedAgeOption)
+                val selectedBreedOption = breedOptions[position]
+                catViewModel.filterCatsByBreed(selectedBreedOption)
             }
 
             override fun onNothingSelected(
