@@ -14,12 +14,12 @@
     <fragment
         android:id="@+id/nav_catmap"
         android:name="com.example.whiskr_app.ui.catmap.CatmapFragment"
-        android:label="@string/menu_gallery"
+        android:label="@string/menu_map"
         tools:layout="@layout/fragment_catmap" />
 
     <fragment
         android:id="@+id/nav_catbot_all_messages"
         android:name="com.example.whiskr_app.ui.catbot.CatbotFragment"
-        android:label="@string/menu_slideshow"
+        android:label="@string/menu_catbot"
         tools:layout="@layout/fragment_catbot_all_chats" />
 </navigation>
