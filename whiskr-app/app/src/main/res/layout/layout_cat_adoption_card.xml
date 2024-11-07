@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/layoutCatAdoptionCardImage"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:contentDescription="Cat Image"
+            android:src="@drawable/cat_default"
+            android:layout_alignParentStart="true"
+            android:padding="12dp"
+            app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Large"
+            />
+
+
+    <TextView
+        android:id="@+id/layoutCatAdoptionCardName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Name"
+        android:layout_toEndOf="@+id/layoutCatAdoptionCardImage"
+        android:gravity="center"
+        android:layout_marginTop="32dp"
+    />
+    <TextView
+        android:id="@+id/layoutCatAdoptionCardSex"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sex"
+        android:layout_toEndOf="@+id/layoutCatAdoptionCardImage"
+        android:layout_below="@+id/layoutCatAdoptionCardName"
+        android:gravity="center"
+    />
+    <TextView
+        android:id="@+id/layoutCatAdoptionCardAge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Age"
+        android:layout_toEndOf="@+id/layoutCatAdoptionCardImage"
+        android:layout_below="@+id/layoutCatAdoptionCardSex"
+        android:gravity="center"
+    />
+    <TextView
+        android:id="@+id/layoutCatAdoptionCardBreed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Breed"
+        android:layout_toEndOf="@+id/layoutCatAdoptionCardImage"
+        android:layout_below="@+id/layoutCatAdoptionCardAge"
+        android:gravity="center"
+        />
+
+</RelativeLayout>
