@@ -11,6 +11,7 @@ import android.widget.ListView
 import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.whiskr_app.R
 
 class CatFragment : Fragment() {
@@ -40,6 +41,10 @@ class CatFragment : Fragment() {
         catViewModel.catList.observe(requireActivity()) { cats ->
             catAdapter.updateCats(cats)
             catAdapter.notifyDataSetChanged()
+        }
+
+        catListView.setOnItemClickListener { _, _, position, _ ->
+            findNavController().navigate(R.id.nav_adoption_details)
         }
 
         createAgeSpinner(view)

@@ -10,6 +10,8 @@
     <string name="menu_home">Home</string>
     <string name="menu_map">Map</string>
     <string name="menu_catbot">CatBot</string>
+    <string name="menu_gallery" />
+    <string name="menu_slideshow" />
 
     <string-array name="filter_options">
         <item>Any</item>
@@ -17,4 +19,6 @@
         <item>Shelter</item>
         <item>Pet Store</item>
     </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

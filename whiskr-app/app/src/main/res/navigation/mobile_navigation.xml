@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.example.whiskr_app.ui.home.HomeFragment"
+        android:name="com.example.whiskr_app.ui.adoption.CatFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_browse_adoption" />
 
     <fragment
         android:id="@+id/nav_catmap"
@@ -28,4 +28,9 @@
         android:name="com.example.whiskr_app.ui.adoption.CatFragment"
         android:label="Adoption"
         tools:layout="@layout/fragment_browse_adoption"/>
+
+    <fragment
+        android:id="@+id/nav_adoption_details"
+        android:name="com.example.whiskr_app.ui.adoption.DetailsFragment"
+        tools:layout="@layout/fragment_details"/>
 </navigation>
