@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_home">
+    app:startDestination="@+id/nav_adoption">
 
     <fragment
-        android:id="@+id/nav_home"
+        android:id="@+id/nav_adoption"
         android:name="com.example.whiskr_app.ui.adoption.CatFragment"
-        android:label="@string/menu_home"
-        tools:layout="@layout/fragment_browse_adoption" />
+        android:label="Adoption"
+        tools:layout="@layout/fragment_browse_adoption"/>
 
     <fragment
         android:id="@+id/nav_catmap"
@@ -22,12 +22,6 @@
         android:name="com.example.whiskr_app.ui.catbot.CatbotFragment"
         android:label="@string/menu_catbot"
         tools:layout="@layout/fragment_catbot_all_chats" />
-
-    <fragment
-        android:id="@+id/nav_adoption"
-        android:name="com.example.whiskr_app.ui.adoption.CatFragment"
-        android:label="Adoption"
-        tools:layout="@layout/fragment_browse_adoption"/>
 
     <fragment
         android:id="@+id/nav_adoption_details"

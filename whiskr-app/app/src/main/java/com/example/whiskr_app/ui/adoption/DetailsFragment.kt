@@ -35,7 +35,6 @@ class DetailsFragment : Fragment() {
         dialogBuilder.setTitle("Get in touch")
             .setMessage("To complete your adoption request, please contact adoptacat@whiskr.com\n")
             .setPositiveButton("Done") { dialog, _ ->
-                // Handle the confirmation action (e.g., update database, send request)
                 Toast.makeText(
                     requireContext(),
                     "Thank you for using Whiskr!",
@@ -43,7 +42,6 @@ class DetailsFragment : Fragment() {
                 ).show()
                 dialog.dismiss()
             }
-        // Show the dialog
         dialogBuilder.create().show()
     }
 }
