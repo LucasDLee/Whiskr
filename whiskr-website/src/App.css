@@ -11,6 +11,8 @@ a {
 
 .heroSection {
   align-items: center;
+  background-color: #FEEFCD;
+  border-bottom: 1px solid black;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -18,6 +20,7 @@ a {
 }
 
 .heroTitle {
+  color: #FF7F00;
   font-size: 3rem;
   font-weight: 700;
 }
@@ -26,6 +29,7 @@ a {
   color: hsl(215.4 16.3% 46.9);
   font-size: 1.25rem;
   line-height: 1.75rem;
+  text-align: center;
 }
 
 .featureDescription {
@@ -34,15 +38,24 @@ a {
 
 .featureCardDescription {
   font-size: 1rem;
+  text-align: left;
 }
 
 .featuresSection {
   align-items: center;
-  background-color: hsl(210 40% 96.1%);
+  /* background-color: hsl(210 40% 96.1%); */
   border-color: hsl(214.3 31.8% 91.4%);
   display: flex;
   flex-direction: column;
   padding: 4rem 0.75rem;
+}
+
+.featuresSection:nth-child(even) {
+  /* background-color: white; */
+}
+
+.featuresSection:nth-child(odd) {
+  /* background-color: #FFF9EC; */
 }
 
 .featureSeparator {
@@ -71,7 +84,7 @@ a {
 .featureGrid {
   border: hsl(214.3 31.8% 91.4%);
   display: grid;
-  grid-template-columns: repeat(1, minmax(0px, 1fr));
+  grid-template-columns: repeat(2, minmax(0px, 1fr));
   row-gap: 2rem;
   column-gap: 0.75rem;
 }
@@ -89,6 +102,8 @@ a {
   border-radius: 0.75rem;
   box-shadow: 0px 0px 2.5px black;
   padding: 1.25rem;
+  width: 350px;
+  height: 350px;
 }
 
 .featureCardIcon {
@@ -116,6 +131,8 @@ a {
 }
 
 .footerSection {
+  background-color: #FEEFCD;
+  border-top: 1px solid black;
   padding: 0 0.75rem 4rem;
 }
 
@@ -123,7 +140,6 @@ a {
   border-top: 1px solid lightgray;
   color: hsl(215.4 16.3% 46.9);
   text-align: center;
-  margin-top: 3rem;
   padding: 1rem 0;
 }
 
