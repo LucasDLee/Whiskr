@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/catbot_chats_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Chat Title"
+        android:textSize="18sp"
+        android:padding="16dp" />
+
+
+    <ListView
+        android:id="@+id/catbot_all_chats_from_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="8dp" />
+
+</RelativeLayout>
+
