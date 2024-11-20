@@ -20,6 +20,7 @@
         <item>Shelter</item>
         <item>Pet Store</item>
     </string-array>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="google_maps_key">AIzaSyBZ0DT2nirbxUwuK-nemjXtsUAwnPZE_Sk</string>
+
 </resources>

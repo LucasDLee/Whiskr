@@ -22,19 +22,12 @@
         android:gravity="center_vertical"
         android:paddingBottom="16dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Enter a city"
-            android:textSize="16sp"
-            android:layout_marginEnd="8dp" />
-
         <EditText
             android:id="@+id/input_city"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="City name"
+            android:hint="Enter a city"
             android:inputType="text" />
 
         <Spinner
@@ -46,6 +39,15 @@
             android:text="Service"
             android:textColor="@android:color/white"
             android:entries="@array/filter_options" />
+
+        <Button
+            android:id="@+id/button_find"
+            android:layout_width="80dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="8dp"
+            android:text="Find"
+            android:backgroundTint="@color/orange"
+            android:textColor="@android:color/white" />
     </LinearLayout>
 
     <com.google.android.gms.maps.MapView
