@@ -4,13 +4,16 @@ import { Footer } from './components/Footer';
 import './App.css';
 import { About } from './components/About';
 import { Team } from './components/Team';
+import { Separator } from './components/Separator';
 
 function App() {
   return (
     <>
       <Hero />
       <About />
+      <Separator />
       <Features />
+      <Separator />
       <Team />
       <Footer />
     </>

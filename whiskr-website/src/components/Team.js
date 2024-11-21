@@ -1,4 +1,9 @@
 export const Team = () => {
+
+  const team = [
+    
+  ]
+
   return (
     <section className="featuresSection">
       <div className="featureSeparator">

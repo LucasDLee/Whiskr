@@ -4,14 +4,20 @@
   font-family: "Inter";
 }
 
+:root {
+  --featureColor: hsl(214.3 31.8% 91.4%);
+  --headerAndFooter: #FEEFCD;
+}
+
 a {
-  text-decoration: none;
   color: black;
+  cursor: pointer;
+  text-decoration: none;
 }
 
 .heroSection {
   align-items: center;
-  background-color: #FEEFCD;
+  background-color: var(--headerAndFooter);
   border-bottom: 1px solid black;
   display: flex;
   flex-direction: column;
@@ -25,14 +31,14 @@ a {
   font-weight: 700;
 }
 
-.heroSubtitle, .featureDescription, .featureCardDescription {
+.heroSubtitle, .featureDescription, .featureCardDescription, .resourceTitle {
   color: hsl(215.4 16.3% 46.9);
   font-size: 1.25rem;
   line-height: 1.75rem;
   text-align: center;
 }
 
-.featureDescription {
+.featureDescription, .resourceDescription {
   font-size: 1.125rem;
 }
 
@@ -44,7 +50,7 @@ a {
 .featuresSection {
   align-items: center;
   /* background-color: hsl(210 40% 96.1%); */
-  border-color: hsl(214.3 31.8% 91.4%);
+  border-color: var(--featureColor);
   display: flex;
   flex-direction: column;
   padding: 4rem 0.75rem;
@@ -68,11 +74,11 @@ a {
 }
 
 .featureHeader {
-  color: #af88dc;
+  color: #ff9831;
   font-weight: 700;
   font-size: 0.875rem;
   line-height: 1.25rem;
-  border-color: hsl(214.3 31.8% 91.4%);
+  border-color: var(--featureColor);
 }
 
 .featureSubheader {
@@ -82,11 +88,11 @@ a {
 }
 
 .featureGrid {
-  border: hsl(214.3 31.8% 91.4%);
+  border: var(--featureColor);
   display: grid;
-  grid-template-columns: repeat(2, minmax(0px, 1fr));
-  row-gap: 2rem;
-  column-gap: 0.75rem;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25em;
+  margin: 0 2.5em;
 }
 
 .featureGridMax {
@@ -97,17 +103,23 @@ a {
 .featureCard {
   padding: 1.25rem;
   background-color: hsl(0 0% 100%);
-  border-color: hsl(214.3 31.8% 91.4%);
+  border-color: var(--featureColor);
   border-width: 1px;
   border-radius: 0.75rem;
+  border: 0.25px solid black;
   box-shadow: 0px 0px 2.5px black;
   padding: 1.25rem;
-  width: 350px;
-  height: 350px;
+  height: 100%;
+  transition: 0.25s;
 }
 
+.featureCard:hover {
+  box-shadow: 2.5px 2.5px 2.5px black;
+}
+
+
 .featureCardIcon {
-  background: linear-gradient(135deg, rgba(192,132,252,1) 0%, rgba(244,114,182,1) 100%);
+  background: linear-gradient(135deg, rgba(255,127,0,1) 0%, rgba(255,206,96,1) 100%);
   border-radius: 0.5rem;
   padding: 0.5rem;
   height: 3rem;
@@ -125,13 +137,13 @@ a {
   display: block;
   border-top-width: 1px;
   width: 2rem;
-  border-color: rgb(192 132 252);
+  border-color: rgb(252, 210, 132);
   border-style: solid;
   margin: 0.75rem 0;
 }
 
 .footerSection {
-  background-color: #FEEFCD;
+  background-color: var(--headerAndFooter);
   border-top: 1px solid black;
   padding: 0 0.75rem 4rem;
 }
@@ -145,4 +157,51 @@ a {
 
 .footerDescription a {
   color: rgb(59 130 246 / 1)
+}
+
+.downloadButtons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1em;
+}
+
+.resourceButton {
+  border-radius: 0.75rem;
+  border: 0.25px solid black;
+  box-shadow: 0px 0px 2.5px black;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1em;
+  transition: 0.25s;
+}
+
+.resourceButton:hover {
+  box-shadow: 2.5px 2.5px 2.5px black;
+}
+
+.resourceButton>div>* {
+  text-align: left;
+}
+
+.resourceIcon {
+  background-color: whitesmoke;
+  /* box-shadow: 0 0 2.5px black; */
+  border-radius: 100px;
+  height: 100px;
+  width: 100px;
+}
+
+/* .resourceTitle {
+  font-size: 1.125rem;
+} */
+
+.resourceDescription {
+
+}
+
+.sectionSeparator {
+  border-top: 5px dotted grey;
+  margin: 0 2.5em;
 }
