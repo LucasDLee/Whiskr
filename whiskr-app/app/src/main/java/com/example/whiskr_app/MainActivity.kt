@@ -1,6 +1,7 @@
 package com.example.whiskr_app
 
 import android.os.Bundle
+import android.widget.TextView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -9,6 +10,8 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.whiskr_app.databinding.ActivityMainBinding
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
 
@@ -38,6 +41,26 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        // Reference to toolbar subtitle
+        val toolbarSubtitle: TextView = findViewById(R.id.toolbar_subtitle)
+        // Firebase Firestore instance
+        val db = FirebaseFirestore.getInstance()
+
+        // Fetch cat facts
+        db.collection("cat_facts").get()
+            .addOnSuccessListener { documents ->
+                if (!documents.isEmpty) {
+                    val facts = documents.map { it.getString("fact") ?: "" }
+                    val randomFact = facts[Random.nextInt(facts.size)]
+                    toolbarSubtitle.text = randomFact
+                } else {
+                    toolbarSubtitle.text = "No cat facts available!"
+                }
+            }
+            .addOnFailureListener { exception ->
+                toolbarSubtitle.text = "Failed to load cat fact."
+            }
     }
 
     override fun onSupportNavigateUp(): Boolean {

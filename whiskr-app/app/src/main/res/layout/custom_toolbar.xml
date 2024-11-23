@@ -26,7 +26,6 @@
             android:id="@+id/toolbar_subtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Did you know cats can jump six times their length?"
             android:textColor="@color/light_orange"
             android:textSize="14sp"
             android:fontFamily="sans-serif"
