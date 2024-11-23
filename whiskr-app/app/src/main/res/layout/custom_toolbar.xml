@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.Toolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/primary"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+    android:padding="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- App Title Image -->
+        <ImageView
+            android:id="@+id/toolbar_title_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_app_name"
+            android:contentDescription="App Title Icon"
+            android:layout_gravity="center" />
+
+        <!-- Dynamic Subtitle -->
+        <TextView
+            android:id="@+id/toolbar_subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Did you know cats can jump six times their length?"
+            android:textColor="@color/light_orange"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif"
+            android:layout_gravity="center"/>
+    </LinearLayout>
+
+</androidx.appcompat.widget.Toolbar>

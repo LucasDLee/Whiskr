@@ -10,5 +10,6 @@
 
     <color name="orange">#FF7F00</color>
     <color name="primary">#FEEFCD</color>
-    <color name="catbot_message_icon">#FEBB79</color>
+    <color name="light_orange">#FEBB79</color>
+    <color name="Brown">#814204</color>v
 </resources>
