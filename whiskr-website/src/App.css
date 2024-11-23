@@ -7,6 +7,7 @@
 :root {
   --featureColor: hsl(214.3 31.8% 91.4%);
   --headerAndFooter: #FEEFCD;
+  --cardBorder: 1px solid black;
 }
 
 a {
@@ -18,7 +19,7 @@ a {
 .heroSection {
   align-items: center;
   background-color: var(--headerAndFooter);
-  border-bottom: 1px solid black;
+  border-bottom: var(--cardBorder);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -56,14 +57,6 @@ a {
   padding: 4rem 0.75rem;
 }
 
-.featuresSection:nth-child(even) {
-  /* background-color: white; */
-}
-
-.featuresSection:nth-child(odd) {
-  /* background-color: #FFF9EC; */
-}
-
 .featureSeparator {
   margin-bottom: 3rem;
   max-width: 768px;
@@ -87,7 +80,7 @@ a {
   line-height: 2.25rem;
 }
 
-.featureGrid {
+.featureGrid, .teamGrid {
   border: var(--featureColor);
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -144,7 +137,7 @@ a {
 
 .footerSection {
   background-color: var(--headerAndFooter);
-  border-top: 1px solid black;
+  border-top: var(--cardBorder);
   padding: 0 0.75rem 4rem;
 }
 
@@ -193,15 +186,18 @@ a {
   width: 100px;
 }
 
-/* .resourceTitle {
-  font-size: 1.125rem;
-} */
-
-.resourceDescription {
-
-}
-
 .sectionSeparator {
   border-top: 5px dotted grey;
   margin: 0 2.5em;
+}
+
+.teamCard {
+  border: var(--cardBorder);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.teamCard>img {
+  height: 500px;
+  width: 300px;
 }
