@@ -1,15 +1,21 @@
 {
   "files": {
-    "main.css": "/Whiskr/static/css/main.43553ffc.css",
-    "main.js": "/Whiskr/static/js/main.5caf9733.js",
+    "main.css": "/Whiskr/static/css/main.dbcf9b94.css",
+    "main.js": "/Whiskr/static/js/main.c1ab936d.js",
     "static/js/453.af7d0b08.chunk.js": "/Whiskr/static/js/453.af7d0b08.chunk.js",
+    "static/media/lucas.jpg": "/Whiskr/static/media/lucas.5c17375c1e8ae018642a.jpg",
+    "static/media/victor.jpg": "/Whiskr/static/media/victor.afe92233f69477c2b0b6.jpg",
+    "static/media/denise.jpg": "/Whiskr/static/media/denise.3b1038a13d71efcc6f7f.jpg",
+    "static/media/cira.webp": "/Whiskr/static/media/cira.3afcb02b660b41f17613.webp",
+    "static/media/android_studio_icon.png": "/Whiskr/static/media/android_studio_icon.306be93d73896fdaf3da.png",
+    "static/media/github.webp": "/Whiskr/static/media/github.ca5e01895c26e9151817.webp",
     "index.html": "/Whiskr/index.html",
-    "main.43553ffc.css.map": "/Whiskr/static/css/main.43553ffc.css.map",
-    "main.5caf9733.js.map": "/Whiskr/static/js/main.5caf9733.js.map",
+    "main.dbcf9b94.css.map": "/Whiskr/static/css/main.dbcf9b94.css.map",
+    "main.c1ab936d.js.map": "/Whiskr/static/js/main.c1ab936d.js.map",
     "453.af7d0b08.chunk.js.map": "/Whiskr/static/js/453.af7d0b08.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.43553ffc.css",
-    "static/js/main.5caf9733.js"
+    "static/css/main.dbcf9b94.css",
+    "static/js/main.c1ab936d.js"
   ]
 }
