@@ -9,7 +9,7 @@ export const About = () => {
       description: "Want to see a demo of our app? Check out our APK!",
       download: true,
       icon: androidStudioIcon,
-      link: androidStudioIcon,
+      link: "",
       title: "Download our APK"
     },
     {

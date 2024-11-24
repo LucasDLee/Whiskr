@@ -8,6 +8,7 @@
   --featureColor: hsl(214.3 31.8% 91.4%);
   --headerAndFooter: #FEEFCD;
   --cardBorder: 1px solid black;
+  --cardDescriptionText: hsl(215.4 16.3% 46.9);
 }
 
 a {
@@ -32,14 +33,14 @@ a {
   font-weight: 700;
 }
 
-.heroSubtitle, .featureDescription, .featureCardDescription, .resourceTitle {
-  color: hsl(215.4 16.3% 46.9);
+.heroSubtitle, .featureDescription, .featureCardDescription, .resourceDescription {
+  color: var(--cardDescriptionText);
   font-size: 1.25rem;
   line-height: 1.75rem;
   text-align: center;
 }
 
-.featureDescription, .resourceDescription {
+.featureDescription {
   font-size: 1.125rem;
 }
 
@@ -119,7 +120,7 @@ a {
   width: 3rem;
 }
 
-.featureCardTitle {
+.featureCardTitle, .resourceTitle {
   font-weight: 700;
   font-size: 1.125rem;
   line-height: 1.75rem;
@@ -143,7 +144,7 @@ a {
 
 .footerDescription {
   border-top: 1px solid lightgray;
-  color: hsl(215.4 16.3% 46.9);
+  color: var(--cardDescriptionText);
   text-align: center;
   padding: 1rem 0;
 }
@@ -180,10 +181,13 @@ a {
 
 .resourceIcon {
   background-color: whitesmoke;
-  /* box-shadow: 0 0 2.5px black; */
   border-radius: 100px;
   height: 100px;
   width: 100px;
+}
+
+.resourceDescription {
+  font-size: 16px;
 }
 
 .sectionSeparator {
@@ -192,12 +196,32 @@ a {
 }
 
 .teamCard {
-  border: var(--cardBorder);
+  border-radius: 0.75rem;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: auto auto;
+  gap: 1em;
+  padding: 0.5rem;
 }
 
 .teamCard>img {
-  height: 500px;
-  width: 300px;
+  box-shadow: 0px 0px 2.5px black;
+  border-radius: 50% 20% / 15% 40%;
+  height: 550px;
+  width: 400px;
+}
+
+.teamCardName {
+  border-bottom: 3px solid rgb(252, 210, 132);;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 0.75em;
+  padding: 0.25em 0;
+  width: fit-content;
+}
+
+.teamCardDescription {
+  color: var(--cardDescriptionText);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
 }
