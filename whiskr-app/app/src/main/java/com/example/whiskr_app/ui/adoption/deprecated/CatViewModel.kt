@@ -1,4 +1,4 @@
-package com.example.whiskr_app.ui.adoption
+package com.example.whiskr_app.ui.adoption.deprecated
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

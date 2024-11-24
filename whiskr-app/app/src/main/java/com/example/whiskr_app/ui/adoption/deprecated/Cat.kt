@@ -1,4 +1,4 @@
-package com.example.whiskr_app.ui.adoption
+package com.example.whiskr_app.ui.adoption.deprecated
 
 data class Cat (
     val image: String,
