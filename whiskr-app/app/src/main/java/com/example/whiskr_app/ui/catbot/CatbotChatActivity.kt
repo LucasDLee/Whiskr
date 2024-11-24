@@ -7,15 +7,23 @@ import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.whiskr_app.R
+import com.google.firebase.auth.FirebaseAuth
 
 class CatbotChatActivity : AppCompatActivity() {
     private lateinit var chatViewModel: ChatViewModel
     private lateinit var chatAdapter: ChatAdapter
-    private lateinit var chatId: String // Add this line
+    private lateinit var chatId: String
+    private val auth = FirebaseAuth.getInstance()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.catbot_individual_chat)
+
+        if (auth.currentUser == null) {
+            finish() // Close the activity if user is not signed in
+            return
+        }
 
         // Get the chatId from intent
         chatId = intent.getStringExtra("chat_id") ?: return
@@ -29,6 +37,8 @@ class CatbotChatActivity : AppCompatActivity() {
         // Observe messages for the selected chatId
         chatViewModel.chatMessages.observe(this) { messages ->
             chatAdapter.updateMessages(messages)
+            // Scroll to the bottom to show the latest message
+            chatListView.setSelection(chatAdapter.count - 1)
         }
 
         // Load messages for the selected chatId

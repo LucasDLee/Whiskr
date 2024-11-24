@@ -8,17 +8,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.content.ContextCompat.startActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.whiskr_app.MainActivity
 import com.example.whiskr_app.R
 import com.example.whiskr_app.databinding.FragmentCatbotAllChatsBinding
-import java.util.UUID
+import com.google.firebase.auth.FirebaseAuth
 
 class CatbotFragment : Fragment() {
 
@@ -28,6 +28,7 @@ class CatbotFragment : Fragment() {
     private lateinit var allChatMessages: ListView
     private lateinit var chatViewModel: ChatViewModel
     private lateinit var parentListAdapter: ParentListAdapter
+    private val auth = FirebaseAuth.getInstance()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,6 +37,11 @@ class CatbotFragment : Fragment() {
     ): View {
         _binding = FragmentCatbotAllChatsBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+        if (auth.currentUser == null) {
+            redirectToLogin()
+            return root
+        }
 
         chatViewModel = ViewModelProvider(this).get(ChatViewModel::class.java)
 
@@ -58,9 +64,6 @@ class CatbotFragment : Fragment() {
                     intent.putExtra("chat_title", selectedChatTitle)
                     startActivity(intent)
                 }
-            } else {
-                // Handle empty list scenario
-                Toast.makeText(requireContext(), "No chats available", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -72,13 +75,42 @@ class CatbotFragment : Fragment() {
             showNewChatDialog()
         }
 
+        // Handle Sign Out button
+        val signOutButton: Button = binding.signOutButton
+        signOutButton.setOnClickListener {
+            signOutUser()
+        }
+
         return root
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (auth.currentUser == null) {
+            redirectToLogin()
+        } else {
+            chatViewModel.loadChatSections()
+        }
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun signOutUser() {
+        FirebaseAuth.getInstance().signOut()
+
+        Toast.makeText(requireContext(), "You have been signed out.", Toast.LENGTH_SHORT).show()
+
+        // Navigate back to Home Page
+        val intent = Intent(requireContext(), MainActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun redirectToLogin() {
+        val intent = Intent(requireContext(), SignInActivity::class.java)
+        startActivity(intent)
     }
 
     // Custom adapter for the main ListView that holds sections with dates and messages
@@ -96,7 +128,6 @@ class CatbotFragment : Fragment() {
             return view
         }
 
-        // Get the chat ID for a specific position
         fun getChatId(position: Int): String = sections[position].chatId
     }
 

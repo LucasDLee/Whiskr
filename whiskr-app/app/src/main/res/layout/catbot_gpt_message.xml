@@ -17,10 +17,12 @@
 
     <TextView
         android:id="@+id/catbot_bot_message"
-        android:background="@color/primary"
-        android:layout_margin="5dp"
+        android:background="@color/orange"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="100dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/white"
         android:padding="12dp"
         android:textSize="16sp"/>
 

@@ -5,17 +5,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="16dp"
     tools:context=".ui.catbot.CatbotFragment">
+
 
     <ListView
         android:id="@+id/catbot_all_chats"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
+        android:paddingBottom="72dp"
         android:clipToPadding="false"
+        android:stackFromBottom="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/fab_new_chat"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -25,13 +26,22 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="107dp"
+        android:layout_marginBottom="24dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginRight="32dp"
+        android:layout_marginRight="24dp"
         android:layout_marginTop="16dp"
         android:src="@drawable/icon_start_new_chat"
         app:maxImageSize="24dp"
         android:contentDescription="Start New Chat"
         app:tint="@null"
         app:backgroundTint="@color/orange"/>
+
+    <Button
+        android:id="@+id/sign_out_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sign Out"
+        android:layout_margin="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:ignore="MissingConstraints" />
 </androidx.constraintlayout.widget.ConstraintLayout>

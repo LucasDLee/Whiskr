@@ -2,22 +2,43 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/light_yellow"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Toolbar -->
-
-    <!-- Chat List -->
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/AppName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:id="@+id/AppBar"
         android:background="@color/primary"
-        android:title="Whiskr"
-        android:titleTextColor="@android:color/white"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="0dp" />
+        android:padding="8dp"
+        tools:ignore="MissingConstraints">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/toolbar_title_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/icon_app_name"
+                android:contentDescription="App Title Icon"
+                android:layout_gravity="center" />
+
+            <TextView
+                android:id="@+id/toolbar_subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/light_orange"
+                android:text="Did you know CatBot is a AI cat expert that are available 24/7?"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif"
+                android:layout_gravity="center"/>
+        </LinearLayout>
+
+    </androidx.appcompat.widget.Toolbar>
 
     <ListView
         android:id="@+id/catbot_conversation"
@@ -29,7 +50,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/AppName"
+        app:layout_constraintTop_toBottomOf="@id/AppBar"
         app:layout_constraintVertical_bias="0.0" />
 
     <LinearLayout
@@ -49,8 +70,9 @@
 
             <EditText
                 android:id="@+id/editText"
-                android:layout_width="250dp"
-                android:layout_height="match_parent"
+                android:layout_width="300dp"
+                android:layout_height="42dp"
+                android:background="@color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

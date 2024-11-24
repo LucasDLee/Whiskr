@@ -33,4 +33,5 @@
         android:id="@+id/nav_adoption_details"
         android:name="com.example.whiskr_app.ui.adoption.DetailsFragment"
         tools:layout="@layout/fragment_details"/>
+
 </navigation>
