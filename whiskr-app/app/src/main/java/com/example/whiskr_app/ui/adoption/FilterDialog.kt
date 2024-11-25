@@ -12,7 +12,7 @@ import com.example.whiskr_app.R
 fun showProvinceAndFilterDialog(
     context: Context,
     provinces: List<String>,
-    onFilterSelected: (province: String, filters: List<String>) -> Unit
+    onFilterSelected: (province: String, selectedAge: List<String>, selectedSex: List<String>) -> Unit
 ) {
     val provincesMap = mapOf(
         "Alberta" to "AB",
@@ -40,12 +40,15 @@ fun showProvinceAndFilterDialog(
     val dialog = dialogBuilder.create()
 
     val spinner: Spinner = dialogView.findViewById(R.id.provinceSpinner)
+    val sexFemaleCheckBox: CheckBox = dialogView.findViewById(R.id.filterGroupFemale)
+    val sexMaleCheckBox: CheckBox = dialogView.findViewById(R.id.filterGroupMale)
     val ageGroupBabyCheckBox: CheckBox = dialogView.findViewById(R.id.filterAgeGroupBaby)
     val ageGroupYoungCheckBox: CheckBox = dialogView.findViewById(R.id.filterAgeGroupYoung)
     val ageGroupAdultCheckBox: CheckBox = dialogView.findViewById(R.id.filterAgeGroupAdult)
     val ageGroupSeniorCheckBox: CheckBox = dialogView.findViewById(R.id.filterAgeGroupSenior)
     val cancelButton: Button = dialogView.findViewById(R.id.dialogCancel)
     val okButton: Button = dialogView.findViewById(R.id.dialogOk)
+
 
     // Set up the spinner with the provinces list
     val adapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, provinces)
@@ -54,7 +57,6 @@ fun showProvinceAndFilterDialog(
 
     // Handle "Cancel" button click
     cancelButton.setOnClickListener {
-        println("VC: CANCEL CLICKED")
         dialog.dismiss()
     }
 
@@ -64,14 +66,19 @@ fun showProvinceAndFilterDialog(
         val selectedProvinceAbbreviation = provincesMap[selectedProvince] ?: ""
 
         // Collect selected filters
-        val selectedFilters = mutableListOf<String>()
-        if (ageGroupBabyCheckBox.isChecked) selectedFilters.add("Age Group: Baby")
-        if (ageGroupYoungCheckBox.isChecked) selectedFilters.add("Age Group: Young")
-        if (ageGroupAdultCheckBox.isChecked) selectedFilters.add("Age Group: Adult")
-        if (ageGroupSeniorCheckBox.isChecked) selectedFilters.add("Age Group: Senior")
+        val selectedAgeGroup = mutableListOf<String>()
+        if (ageGroupBabyCheckBox.isChecked) selectedAgeGroup.add("Baby")
+        if (ageGroupYoungCheckBox.isChecked) selectedAgeGroup.add("Young")
+        if (ageGroupAdultCheckBox.isChecked) selectedAgeGroup.add("Adult")
+        if (ageGroupSeniorCheckBox.isChecked) selectedAgeGroup.add("Senior")
+
+        // Collection of selected sex
+        val selectedSex = mutableListOf<String>()
+        if (sexFemaleCheckBox.isChecked) selectedSex.add("Female")
+        if (sexMaleCheckBox.isChecked) selectedSex.add("Male")
 
         // Pass selected province and filters to the callback
-        onFilterSelected(selectedProvinceAbbreviation, selectedFilters)
+        onFilterSelected(selectedProvinceAbbreviation, selectedAgeGroup, selectedSex)
 
         // Dismiss the dialog
         dialog.dismiss()

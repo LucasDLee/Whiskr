@@ -19,11 +19,23 @@
         app:drawableStartCompat="@drawable/baseline_filter_alt_24"
     />
 
+    <TextView
+        android:id="@+id/fragmentsBrowseAdoptionEmpty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="No Cats To Adopt"
+        android:visibility="gone"
+        >
+
+    </TextView>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="8dp"
         android:background="@color/orange"
-    />
+        />
 
     <ListView
         android:id="@+id/fragmentBrowseAdoptionListView"

@@ -11,5 +11,5 @@ data class FilterData(
 data class Filter(
     val fieldName: String,
     val operation: String,
-    val criteria: String
+    val criteria: Any
 )

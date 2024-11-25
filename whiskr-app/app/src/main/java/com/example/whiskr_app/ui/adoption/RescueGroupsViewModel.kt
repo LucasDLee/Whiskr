@@ -23,6 +23,24 @@ class RescueGroupsViewModel : ViewModel() {
 
     private val apiService = RetrofitClient.apiService
 
+    fun fetchAnimalsByProvince(filter: List<Filter>) {
+        viewModelScope.launch {
+            try {
+                // Perform the API call
+                val filters = filter
+
+                val filterRequest = FilterRequest(FilterData(filters))
+                val response = apiService.getAvailableAnimals(filterRequest)
+
+                _animals.postValue(response.data)  // Post the data to LiveData
+                _included.postValue(response.included)
+                Log.d("Animal Fetch Success", response.toString())
+            } catch (e: Exception) {
+                Log.e("Animal Fetch Error", e.message.orEmpty())
+            }
+        }
+    }
+
     fun fetchAnimals() {
         viewModelScope.launch {
             try {

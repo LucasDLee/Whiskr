@@ -8,14 +8,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
+import com.bumptech.glide.Glide
 import com.example.whiskr_app.R
 import com.example.whiskr_app.ui.adoption.model.AnimalData
 
 class DetailsFragment : Fragment() {
+    private lateinit var imageView: ImageView
+    private lateinit var imageView2: ImageView
     private lateinit var adoptNowButton: Button
     private lateinit var description: TextView
 
@@ -31,12 +35,35 @@ class DetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        imageView = view.findViewById(R.id.fragmentDetailsImageOne)
+        imageView2 = view.findViewById(R.id.fragmentDetailsImageTwo)
         description = view.findViewById(R.id.fragmentDetailsDescription)
 
 
         val animalData = arguments?.getParcelable("cat_detail", AnimalData::class.java)
+        val imageUrl = animalData?.attributes?.pictureThumbnailUrl
+        Glide.with(this)
+            .load(imageUrl)
+            .placeholder(R.drawable.cat_default)
+            .into(imageView)
 
-        description.text = Html.fromHtml(animalData?.attributes?.descriptionHtml, Html.FROM_HTML_MODE_COMPACT)
+        Glide.with(this)
+            .load(R.drawable.cat_default)
+            .into(imageView2)
+
+        val descriptionText = animalData?.attributes?.descriptionHtml
+        if (descriptionText.isNullOrEmpty()) {
+            // Set to "No description available" and center it
+            description.text = Html.fromHtml(
+                "<div style=\"text-align: center;\">No description available</div>",
+                Html.FROM_HTML_MODE_COMPACT or Html.FROM_HTML_SEPARATOR_LINE_BREAK_DIV)
+        } else {
+            // Set the description HTML
+            description.text = Html.fromHtml(
+                descriptionText,
+                Html.FROM_HTML_MODE_COMPACT or Html.FROM_HTML_SEPARATOR_LINE_BREAK_DIV
+            )
+        }
 
         adoptNowButton = view.findViewById(R.id.button_adopt_now)
         adoptNowButton.setOnClickListener {
