@@ -16,6 +16,8 @@ import com.example.whiskr_app.ui.adoption.model.AnimalData
 import com.example.whiskr_app.ui.adoption.model.Filter
 import com.example.whiskr_app.ui.adoption.showProvinceAndFilterDialog
 import java.util.ArrayList
+import com.example.whiskr_app.ui.adoption.util.Canadian
+
 
 class RescueGroupsCatListings : Fragment() {
     private lateinit var filter: TextView
@@ -28,11 +30,9 @@ class RescueGroupsCatListings : Fragment() {
     private lateinit var selectAgeGroup: List<String>
     private lateinit var selectSex: List<String>
 
+    private var switchState = false
+    private var postalCode = " "
     private var default = true
-    private val provinces = listOf(
-        "Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland and Labrador",
-        "Nova Scotia", "Ontario", "Prince Edward Island", "Quebec", "Saskatchewan"
-    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,16 +44,33 @@ class RescueGroupsCatListings : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val selectedProvince = arguments?.getString("selectedProvince", " ")
+        selectProvince = selectedProvince.toString()
 
+        println("VC: 50 $selectProvince")
+
+        selectAgeGroup = listOf("Baby", "Young", "Adult", "Senior")
+        selectSex = listOf("Female", "Male")
         // Restore saved state
         if (savedInstanceState != null) {
             default = savedInstanceState.getBoolean("default")
             val restoredProvince = savedInstanceState.getString("selectedProvince")
             val restoredAgeGroup = savedInstanceState.getStringArrayList("selectedAgeGroup")
-
-            if (restoredProvince != null && restoredAgeGroup != null) {
-                selectProvince = restoredProvince
+            val restoredSexes = savedInstanceState.getStringArrayList("selectedSexGroup")
+            val restoredPostalCode = savedInstanceState.getString("postalCode", " ")
+            val restoredSwitchState = savedInstanceState.getBoolean("switchState", false)
+            postalCode = restoredPostalCode
+            switchState = restoredSwitchState
+            if (restoredAgeGroup != null) {
                 selectAgeGroup = restoredAgeGroup
+            }
+
+            if (restoredProvince != null) {
+                selectProvince = restoredProvince
+            }
+
+            if (restoredSexes != null) {
+                selectSex = restoredSexes
             }
         }
 
@@ -89,15 +106,31 @@ class RescueGroupsCatListings : Fragment() {
 
         filter = view.findViewById(R.id.fragmentBrowseAdoptionFilterBy)
         filter.setOnClickListener {
-            showProvinceAndFilterDialog(requireContext(), provinces) {
+            val util = Canadian()
+            val provinceName = util.getProvinceName(selectProvince)
+            showProvinceAndFilterDialog(requireContext(), util.getProvinces(),
+                provinceName, selectAgeGroup, selectSex, postalCode, switchState) {
                 // Handle the selected province and filters
-                selectedProvince, selectedAgeGroup, selectedSex ->
-                println("Selected Province: $selectedProvince")
-                selectProvince = selectedProvince
-                println("Selected Age Groups: $selectedAgeGroup")
+                filterType, filterValue, selectedAgeGroup, selectedSex, switchState ->
+                if (filterType == "province") {
+                    println("VC: Selected Province: $filterValue")
+                    selectProvince = filterValue
+                    postalCode = " "
+                }
+                if (filterType == "postalCode") {
+                    println("VC: Entered Postal Code: $filterValue")
+                    postalCode = filterValue
+                    val converter = Canadian()
+                    val province = converter.getProvinceFromPostalCode(postalCode)
+                    selectProvince = province
+                }
+
+                println("VC: Selected Age Groups: $selectedAgeGroup")
                 selectAgeGroup = selectedAgeGroup
-                println("Selected Sex: ${selectedSex}")
+                println("VC: Selected Sex: $selectedSex")
                 selectSex = selectedSex
+                println("VC: SwitchState $switchState")
+                this.switchState = switchState
 
                 // handle default for filter
                 default = false
@@ -107,7 +140,7 @@ class RescueGroupsCatListings : Fragment() {
                     Filter("statuses.name", "equals", "Available"),
                     Filter("species.singular", "equals", "Cat"),
                     Filter("locations.country", "equals", "Canada"),
-                    Filter("locations.state", "equals", selectedProvince)
+                    Filter("locations.state", "equals", selectProvince)
                 )
 
                 // Add additional filters based on user selection
@@ -125,15 +158,16 @@ class RescueGroupsCatListings : Fragment() {
                 viewModel.fetchAnimalsByProvince(filters)
             }
         }
-
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putBoolean("default", default)
         outState.putString("selectedProvince", selectProvince)
-        outState.putStringArrayList("selectedAgeGroup", (selectAgeGroup as ArrayList<String>))
-        outState.putStringArrayList("selectedSex", (selectSex as ArrayList<String>))
+        outState.putString("postalCode", postalCode)
+        outState.putBoolean("switchState", switchState)
+        outState.putStringArrayList("selectedAgeGroup",  ArrayList(selectAgeGroup))
+        outState.putStringArrayList("selectedSexGroup", ArrayList(selectSex))
 
     }
 

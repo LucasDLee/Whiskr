@@ -11,7 +11,41 @@
         android:layout_height="wrap_content"
         android:text="Select Filters"
         android:textSize="18sp"
-        android:paddingBottom="8dp"/>
+        android:paddingBottom="8dp"
+        />
+
+    <TextView
+        android:id="@+id/dialogTextError"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="error"
+        android:textColor="@color/red_error"
+        android:visibility="gone"
+        />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/dialogFilterSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Filter by Province or Postal Code"
+        />
+
+    <TextView
+        android:id="@+id/dialogPostalCodeTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Enter Postal Code"
+        android:paddingTop="8dp"
+        android:textSize="16sp"
+        android:visibility="gone"/>
+
+    <EditText
+        android:id="@+id/postalCodeEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Enter Postal Code"
+        android:visibility="gone"
+        android:inputType="text" />
 
     <TextView
         android:id="@+id/dialogProvinceTitle"

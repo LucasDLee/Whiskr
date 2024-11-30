@@ -11,4 +11,5 @@
     <color name="orange">#FF7F00</color>
     <color name="primary">#FEEFCD</color>
     <color name="catbot_message_icon">#FEBB79</color>
+    <color name="red_error">#D32F2F</color>
 </resources>
