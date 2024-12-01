@@ -32,6 +32,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.tasks.await
 
 
 class CatmapFragment : Fragment(), OnMapReadyCallback {
@@ -69,6 +70,7 @@ class CatmapFragment : Fragment(), OnMapReadyCallback {
             Toast.makeText(requireContext(), "Searching for: $selectedService", Toast.LENGTH_SHORT).show()
             searchNearby(selectedService)
         }
+
         mapView = root.findViewById(R.id.map_view)
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
@@ -82,33 +84,30 @@ class CatmapFragment : Fragment(), OnMapReadyCallback {
         googleMap = map
         enableMyLocation()
 
-        // Set the custom info window adapter
+        // Set the info window adapter
         val locationInfoAdapter = LocationInfoAdapter(requireContext())
         googleMap.setInfoWindowAdapter(locationInfoAdapter)
-
 
         googleMap.setOnMarkerClickListener { marker ->
             currentMarker = marker
             marker.showInfoWindow()
 
             lastPolyline?.remove()
-            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-                if (location != null) {
-                    drawRoute(LatLng(location.latitude, location.longitude), marker.position)
-                } else {
-                    Toast.makeText(requireContext(), "Current location not available", Toast.LENGTH_SHORT).show()
+            CoroutineScope(Dispatchers.IO).launch {
+                fusedLocationClient.lastLocation.await()?.let { location ->
+                    val origin = LatLng(location.latitude, location.longitude)
+                    withContext(Dispatchers.Main) {
+                        drawRoute(origin, marker.position)
+                    }
+                } ?: run {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(requireContext(), "Current location not available", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
-
-            // Memory logging for allocation error debugging
-            val usedMemory = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024)
-            Log.d("Memory", "Memory used: ${usedMemory}MB")
-
             true
         }
-
     }
-
 
     private fun enableMyLocation() {
         if (ContextCompat.checkSelfPermission(
@@ -133,23 +132,27 @@ class CatmapFragment : Fragment(), OnMapReadyCallback {
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             googleMap.isMyLocationEnabled = true
+            CoroutineScope(Dispatchers.IO).launch {
+                fusedLocationClient.lastLocation.await()?.let {
+                    val userLocation = LatLng(it.latitude, it.longitude)
+                    withContext(Dispatchers.Main) {
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 12f))
+                    }
+                } ?: run {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Unable to get current location",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
         } else {
             requestPermissions(
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
                 LOCATION_PERMISSION_REQUEST_CODE
             )
-        }
-        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-            location?.let {
-                val userLocation = LatLng(it.latitude, it.longitude)
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 12f))
-            } ?: run {
-                Toast.makeText(
-                    requireContext(),
-                    "Unable to get current location",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
         }
     }
 
@@ -167,42 +170,62 @@ class CatmapFragment : Fragment(), OnMapReadyCallback {
             "Pet Store" to "pet store"
         )
         val query = when (service) {
-            "Any" -> serviceToQuery.values.joinToString(" AND ") // Combine all services with AND for the "Any" option
-            else -> serviceToQuery[service] ?: service // Use the specific query for selected service
+            "Any" -> serviceToQuery.values.joinToString(" AND ")
+            else -> serviceToQuery[service] ?: service
         }
 
+        // Check if location permission is granted
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-                location?.let {
-                    val currentLocation = LatLng(it.latitude, it.longitude)
-                    val searchHelper = ServiceSearchHelper(currentLocation, query = query)
-                    searchHelper.findPlaces { places ->
-                        requireActivity().runOnUiThread {
-                            Log.d("CatmapFragment", "Found ${places.size} places for query: $query")
-                            if (places.isEmpty()) {
-                                Toast.makeText(requireContext(), "No places found for $service", Toast.LENGTH_SHORT).show()
-                            } else {
-                                updateMapMarkers(places)
+            // Start a coroutine to perform the background task
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    // Await the result of the last known location
+                    val location = fusedLocationClient.lastLocation.await()
+
+                    location?.let {
+                        val currentLocation = LatLng(it.latitude, it.longitude)
+                        val searchHelper = ServiceSearchHelper(currentLocation, query = query)
+
+                        // Perform the place search asynchronously
+                        searchHelper.findPlaces { places ->
+                            // Switch back to the main thread to update UI
+                            CoroutineScope(Dispatchers.Main).launch {
+                                Log.d("CatmapFragment", "Found ${places.size} places for query: $query")
+                                if (places.isEmpty()) {
+                                    Toast.makeText(requireContext(), "No places found for $service", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    updateMapMarkers(places)
+                                }
                             }
                         }
+                    } ?: run {
+                        // Handle case where location is null
+                        CoroutineScope(Dispatchers.Main).launch {
+                            Toast.makeText(requireContext(), "Unable to get current location", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                } catch (e: Exception) {
+                    // Handle exception if any error occurs during the location fetch or search
+                    CoroutineScope(Dispatchers.Main).launch {
+                        Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
         } else {
+            // Handle the case when permission is not granted
             Toast.makeText(requireContext(), "Location permission not granted", Toast.LENGTH_SHORT).show()
         }
     }
 
+
     private fun updateMapMarkers(places: List<SearchResult>) {
-        // Clear previous markers
         googleMap.clear()
 
         val boundsBuilder = LatLngBounds.Builder()
-
         for (place in places) {
             val marker = googleMap.addMarker(
                 MarkerOptions()
@@ -210,17 +233,15 @@ class CatmapFragment : Fragment(), OnMapReadyCallback {
                     .title(place.name)
                     .snippet(place.address)
             )
-            boundsBuilder.include(marker!!.position) // Include each marker in bounds
+            boundsBuilder.include(marker!!.position)
         }
 
-        // Move the camera to show all markers
         if (places.isNotEmpty()) {
             val bounds = boundsBuilder.build()
             googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
         }
     }
 
-    // Possible cause of allocation error...
     private fun drawRoute(origin: LatLng, destination: LatLng) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -241,7 +262,6 @@ class CatmapFragment : Fragment(), OnMapReadyCallback {
             }
         }
     }
-
 
     override fun onPause() {
         super.onPause()
