@@ -19,6 +19,9 @@
         <item>Shelter</item>
         <item>Pet Store</item>
     </string-array>
+
+    <string name="catbot_webhook_key">afc75a6b-b7f1-4439-8bad-48cd322d0861</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -19,6 +19,12 @@ import com.example.whiskr_app.MainActivity
 import com.example.whiskr_app.R
 import com.example.whiskr_app.databinding.FragmentCatbotAllChatsBinding
 import com.google.firebase.auth.FirebaseAuth
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
+import org.json.JSONObject
 
 class CatbotFragment : Fragment() {
 
@@ -29,6 +35,12 @@ class CatbotFragment : Fragment() {
     private lateinit var chatViewModel: ChatViewModel
     private lateinit var parentListAdapter: ParentListAdapter
     private val auth = FirebaseAuth.getInstance()
+
+    // Botpress API
+    private var client: OkHttpClient = OkHttpClient()
+    private var mediaType: MediaType? = "application/json".toMediaTypeOrNull()
+    private lateinit var chatbotToken: String
+    private lateinit var chatbotConnectionUrl: String
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,6 +54,21 @@ class CatbotFragment : Fragment() {
             redirectToLogin()
             return root
         }
+
+        // See if we need to create a Botpress user for the email
+        checkIfBotpressTokenIsEmpty { isEmpty ->
+            if (isEmpty) {
+                createBotpressUser()
+            }
+        }
+
+        // Set the token assuming we've already created the user
+        (activity as? MainActivity)?.getBotpressToken { token ->
+            println("OMG TOKEN ${token}")
+            chatbotToken = token.toString()
+        }
+
+        chatbotConnectionUrl = resources.getString(R.string.catbot_webhook_key)
 
         chatViewModel = ViewModelProvider(this).get(ChatViewModel::class.java)
 
@@ -96,6 +123,91 @@ class CatbotFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    /**
+     * Calls the Botpress API to build a JWT key for the user
+     */
+    private fun createBotpressUser() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId != null) {
+            val body = RequestBody.create(mediaType, "{\"name\":\"${userId}\",\"id\":\"${userId}\"}")
+            val request = Request.Builder()
+                .url("https://chat.botpress.cloud/${chatbotConnectionUrl}/users")
+                .post(body)
+                .addHeader("accept", "application/json")
+                .addHeader("content-type", "application/json")
+                .build()
+
+            // Run the network request asynchronously using a background thread
+            Thread {
+                try {
+                    val getRequest = client.newCall(request).execute()
+                    val responseBody = getRequest.body?.string() ?: "Null"
+                    val jsonObject = JSONObject(responseBody)
+
+                    // Extract the key
+                    val key = jsonObject.getString("key")
+
+                    // Now update Firestore with the extracted key
+                    val firestore = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                    val userRef = firestore.collection("users").document(userId)
+
+                    // Data to add or update
+                    val userData = hashMapOf(
+                        "key" to key
+                    )
+
+                    userRef.set(userData).addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            println("User data updated with key.")
+                        } else {
+                            println("Failed to update user data: ${task.exception?.message}")
+                        }
+                    }
+
+                    // Set the token after creation
+                    (activity as? MainActivity)?.getBotpressToken { token ->
+                        chatbotToken = token.toString()
+                    }
+                } catch (e: Exception) {
+                    println("Error: ${e.message}")
+                }
+            }.start()
+        } else {
+            println("User is not logged in.")
+        }
+    }
+
+    /**
+     * Checks if we've created a Botpress account with a user's email
+     * Returns a BOOLEAN to indicate a yes/no answer
+     */
+    private fun checkIfBotpressTokenIsEmpty(callback: (Boolean) -> Unit) {
+        val firestore = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId == null) {
+            Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
+            callback(false) // Return false since the user is not logged in
+            return
+        }
+
+        firestore.collection("users").document(userId).get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val username = document.getString("key")
+                    if (username.isNullOrEmpty()) {
+                        callback(true) // Token is empty
+                    } else {
+                        callback(false) // Token is not empty
+                    }
+                } else {
+                    callback(true) // Assume empty if document doesn't exist
+                }
+            }
+            .addOnFailureListener {
+                callback(false) // On failure, assume not empty to avoid unintended consequences
+            }
     }
 
     private fun signOutUser() {
@@ -172,6 +284,18 @@ class CatbotFragment : Fragment() {
         val finalTitle = chatTitle ?: "Untitled Chat"
         // Default to "Untitled Chat" if no title is provided
         val chatId = java.util.UUID.randomUUID().toString()
+
+        // Create the conversation in Botpress
+        val body = RequestBody.create(mediaType, "{\"id\":\"${chatId}\"}")
+        val request = Request.Builder()
+            .url("https://chat.botpress.cloud/${chatbotConnectionUrl}/conversations")
+            .post(body)
+            .addHeader("accept", "application/json")
+            .addHeader("x-user-key", chatbotToken)
+            .addHeader("content-type", "application/json")
+            .build()
+
+        client.newCall(request).execute()
         chatViewModel.addNewChat(chatId, chatTitle)
 
         // Navigate to the new chat
