@@ -64,7 +64,6 @@ class CatbotFragment : Fragment() {
 
         // Set the token assuming we've already created the user
         (activity as? MainActivity)?.getBotpressToken { token ->
-            println("OMG TOKEN ${token}")
             chatbotToken = token.toString()
         }
 
@@ -243,8 +242,9 @@ class CatbotFragment : Fragment() {
         fun getChatId(position: Int): String = sections[position].chatId
     }
 
-
-    // Helper function to adjust ListView height based on items
+    /**
+     * Helper function to adjust ListView height based on items
+     */
     private fun setListViewHeightBasedOnItems(listView: ListView) {
         val listAdapter = listView.adapter ?: return
         var totalHeight = 0
@@ -258,7 +258,9 @@ class CatbotFragment : Fragment() {
         listView.layoutParams = params
     }
 
-    // Show a dialog for the user to enter the title of the new chat
+    /**
+     * Show a dialog for the user to enter the title of the new chat
+     */
     private fun showNewChatDialog() {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Start New Chat")
@@ -279,7 +281,9 @@ class CatbotFragment : Fragment() {
         builder.show()
     }
 
-    // Create a new chat in the database
+    /**
+     * Create a new chat in the database
+     */
     private fun createChatInDatabase(chatTitle: String) {
         val finalTitle = chatTitle ?: "Untitled Chat"
         // Default to "Untitled Chat" if no title is provided
@@ -295,7 +299,10 @@ class CatbotFragment : Fragment() {
             .addHeader("content-type", "application/json")
             .build()
 
-        client.newCall(request).execute()
+        Thread {
+            client.newCall(request).execute()
+        }.start()
+
         chatViewModel.addNewChat(chatId, chatTitle)
 
         // Navigate to the new chat

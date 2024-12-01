@@ -84,7 +84,6 @@ class MainActivity : AppCompatActivity() {
             .addOnSuccessListener { document ->
                 if (document.exists()) {
                     val token = document.getString("key")
-                    println("THIS IS YOUR TOKEN ${token}")
                     callback(token) // Return the token value
                 } else {
                     callback(null) // Return null if document doesn't exist

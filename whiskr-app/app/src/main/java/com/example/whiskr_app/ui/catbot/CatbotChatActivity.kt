@@ -15,6 +15,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import org.json.JSONObject
+import kotlinx.coroutines.*
 
 class CatbotChatActivity : AppCompatActivity() {
     private lateinit var chatViewModel: ChatViewModel
@@ -32,7 +33,7 @@ class CatbotChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.catbot_individual_chat)
 
-        (applicationContext as? MainActivity)?.getBotpressToken { token ->
+        getBotpressToken { token ->
             chatbotToken = token.toString()
         }
         chatbotConnectionUrl = resources.getString(R.string.catbot_webhook_key)
@@ -69,43 +70,81 @@ class CatbotChatActivity : AppCompatActivity() {
             if (userMessage.isNotBlank()) {
                 // Add the user's message
                 chatViewModel.addMessageToChat(chatId, userMessage, isUser = true)
-
-                // TODO: Replace with actual bot response logic
-                val botResponse = generateBotResponse(chatId, userMessage)
-                chatViewModel.addMessageToChat(chatId, botResponse, isUser = false)
-
+                generateBotResponse(chatId, userMessage)
                 editText.text.clear()
             }
         }
     }
 
     /**
-     * Function posts the message to Botpress and gets the list of messages from the conversation.
-     * We get the most recent message as our response as there's always one user message for every bot message
+     * Calls the current user's Botpress key and returns it (i.e. whoever's signed in the app right now)
      */
-    private fun generateBotResponse(chatId: String, userMessage: String): String {
-        // Implement your bot's response logic here
-
-        // Step 1: Post the user's message to the conversation
-        val body = RequestBody.create(mediaType, "{\"payload\":{\"type\":\"text\",\"text\":\"${userMessage}\"}}")
-        val postRequest = Request.Builder()
-            .url("https://chat.botpress.cloud/${chatbotConnectionUrl}/messages")
-            .post(body)
-            .addHeader("accept", "application/json")
-            .addHeader("content-type", "application/json")
-            .build()
-
-        try {
-            val postResponse = client.newCall(postRequest).execute()
-            if (!postResponse.isSuccessful) {
-                return "Failed to send message: ${postResponse.message}"
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return "An error occurred: ${e.message}"
+    fun getBotpressToken(callback: (String?) -> Unit) {
+        val firestore = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId == null) {
+            callback(null) // Return null if user is not logged in
+            return
         }
 
-        // Step 2: Fetch the updated conversation messages
+        firestore.collection("users").document(userId).get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val token = document.getString("key")
+                    callback(token) // Return the token value
+                } else {
+                    callback(null) // Return null if document doesn't exist
+                }
+            }
+            .addOnFailureListener { exception ->
+                callback(null) // Return null on failure
+            }
+    }
+
+    /**
+     * This function gets the current set of messages and checks if we've updated it with our new message
+     * Steps:
+     * 1) Get our current message list and return the number of messages in it
+     * 2) Post our response to Botpress
+     * 3) Wait until our message list has updated with both responses
+     */
+    private fun generateBotResponse(chatId: String, userMessage: String): String {
+        var responseMessage = ""
+
+        runBlocking {
+            try {
+                // Step 1: Get the initial message count
+                val initialCount = withContext(Dispatchers.IO) { getMessageCount(chatId) }
+
+                if (initialCount == null) {
+                    responseMessage = "Failed to fetch initial messages."
+                    return@runBlocking
+                }
+
+                // Step 2: Post the user's message
+                val postSuccessful = withContext(Dispatchers.IO) { postUserMessage(chatId, userMessage) }
+
+                if (!postSuccessful) {
+                    responseMessage = "Failed to send user message."
+                    return@runBlocking
+                }
+
+                // Step 3: Poll for updates
+                responseMessage = withContext(Dispatchers.IO) { pollForNewMessage(chatId, initialCount) }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                responseMessage = "An error occurred: ${e.message}"
+            }
+        }
+
+        chatViewModel.addMessageToChat(chatId, responseMessage, isUser = false)
+        return responseMessage
+    }
+
+    /**
+     * Helper function to get the total number of messages
+     */
+    private fun getMessageCount(chatId: String): Int? {
         val getRequest = Request.Builder()
             .url("https://chat.botpress.cloud/${chatbotConnectionUrl}/conversations/${chatId}/messages")
             .get()
@@ -113,30 +152,89 @@ class CatbotChatActivity : AppCompatActivity() {
             .addHeader("x-user-key", chatbotToken)
             .build()
 
-        try {
-            val getResponse = client.newCall(getRequest).execute()
-            if (!getResponse.isSuccessful) {
-                return "Failed to fetch messages: ${getResponse.message}"
+        return try {
+            val response = client.newCall(getRequest).execute()
+            if (response.isSuccessful) {
+                val responseBody = response.body?.string()
+                val jsonObject = JSONObject(responseBody ?: "{}")
+                val messagesArray = jsonObject.getJSONArray("messages")
+                messagesArray.length()
+            } else {
+                null
             }
-
-            val responseBody = getResponse.body?.string() ?: return "Empty response"
-            val jsonObject = JSONObject(responseBody)
-
-            // Access the "messages" array
-            val messagesArray = jsonObject.getJSONArray("messages")
-            if (messagesArray.length() == 0) {
-                return "No messages found"
-            }
-
-            // Get the first message
-            val mostRecentMessage = messagesArray.getJSONObject(0)
-            val payload = mostRecentMessage.getJSONObject("payload")
-            val text = payload.getString("text")
-
-            return text
         } catch (e: Exception) {
             e.printStackTrace()
-            return "An error occurred while fetching the bot response: ${e.message}"
+            null
         }
+    }
+
+    /**
+     * Function posts the message to Botpress
+     */
+    private fun postUserMessage(chatId: String, userMessage: String): Boolean {
+        val body = RequestBody.create(
+            mediaType,
+            "{\"payload\":{\"type\":\"text\",\"text\":\"${userMessage}\"},\"conversationId\":\"${chatId}\"}"
+        )
+        val postRequest = Request.Builder()
+            .url("https://chat.botpress.cloud/${chatbotConnectionUrl}/messages")
+            .post(body)
+            .addHeader("accept", "application/json")
+            .addHeader("x-user-key", chatbotToken)
+            .addHeader("content-type", "application/json")
+            .build()
+
+        return try {
+            val response = client.newCall(postRequest).execute()
+            println("POST REQUESTING ${response}")
+            response.isSuccessful
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
+    /**
+     * Helper function to get the new list of messages
+     */
+    private suspend fun pollForNewMessage(chatId: String, initialCount: Int): String {
+        val maxRetries = 10
+        val delayMillis = 3000L
+
+        repeat(maxRetries) { attempt ->
+            val currentCount = getMessageCount(chatId)
+
+            if (currentCount == null) {
+                return "Failed to fetch messages after posting."
+            }
+
+            // Must do initialCount + 1 as we always get a set of 2 messages (1 from the user, 1 from the bot)
+            if (currentCount > initialCount + 1) {
+                // Fetch the most recent message
+                val getRequest = Request.Builder()
+                    .url("https://chat.botpress.cloud/${chatbotConnectionUrl}/conversations/${chatId}/messages")
+                    .get()
+                    .addHeader("accept", "application/json")
+                    .addHeader("x-user-key", chatbotToken)
+                    .build()
+
+                val response = client.newCall(getRequest).execute()
+                if (response.isSuccessful) {
+                    val responseBody = response.body?.string()
+                    val jsonObject = JSONObject(responseBody ?: "{}")
+                    val messagesArray = jsonObject.getJSONArray("messages")
+                    val mostRecentMessage = messagesArray.getJSONObject(0)
+                    val payload = mostRecentMessage.getJSONObject("payload")
+
+                    return payload.getString("text")
+                }
+                return "Failed to fetch the updated message."
+            }
+
+            // Wait before trying again
+            delay(delayMillis)
+        }
+
+        return "CatBot update timed out after ${maxRetries} attempts."
     }
 }
