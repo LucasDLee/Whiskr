@@ -6,7 +6,6 @@ import android.widget.ImageButton
 import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import com.example.whiskr_app.MainActivity
 import com.example.whiskr_app.R
 import com.google.firebase.auth.FirebaseAuth
 import okhttp3.MediaType
@@ -33,6 +32,7 @@ class CatbotChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.catbot_individual_chat)
 
+        // Set the token and Botpress URL
         getBotpressToken { token ->
             chatbotToken = token.toString()
         }

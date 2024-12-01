@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Calls the current user's Botpress key and returns it (i.e. whoever's signed in the app right now)
+     * Calls the current user's Botpress key and returns it (i.e. whoever is signed into Firebase right now)
      */
     fun getBotpressToken(callback: (String?) -> Unit) {
         val firestore = com.google.firebase.firestore.FirebaseFirestore.getInstance()

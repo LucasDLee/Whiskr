@@ -14,7 +14,9 @@ class ChatViewModel : ViewModel() {
     val chatTitles = MutableLiveData<Map<String, String>>()
     val chatMessages = MutableLiveData<List<ChatMessage>>()
 
-    // Load all chat sections (titles) from the database
+    /**
+     * Load all chat sections (titles) from the database
+     */
     fun loadChatSections() {
         val uid = userId ?: return
         db.collection("users").document(uid).collection("chats").get()
@@ -32,6 +34,9 @@ class ChatViewModel : ViewModel() {
             }
     }
 
+    /**
+     * Load all messages from a given conversation
+     */
     fun loadMessagesForChat(chatId: String) {
         val uid = userId ?: return
         db.collection("users").document(uid).collection("chats").document(chatId).collection("messages")
@@ -47,7 +52,9 @@ class ChatViewModel : ViewModel() {
             }
     }
 
-    // Add a new message to a specific chat
+    /**
+     * Add a new message to a specific chat
+     */
     fun addMessageToChat(chatId: String, text: String, isUser: Boolean) {
         val uid = userId ?: return
         val timestamp = System.currentTimeMillis()
@@ -57,7 +64,9 @@ class ChatViewModel : ViewModel() {
             .add(message)
     }
 
-    // Add a new chat to the database
+    /**
+     * Add a new chat to the database
+     */
     fun addNewChat(chatId: String, title: String?) {
         val uid = userId ?: return
         val finalTitle = title?.takeIf { it.isNotBlank() } ?: "Untitled Chat" // Default title if none provided

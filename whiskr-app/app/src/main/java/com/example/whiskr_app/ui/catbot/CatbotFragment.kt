@@ -181,6 +181,8 @@ class CatbotFragment : Fragment() {
     /**
      * Checks if we've created a Botpress account with a user's email
      * Returns a BOOLEAN to indicate a yes/no answer
+     * Yes: No Botpress token made yet
+     * No: We've already made a Botpress token so don't make it again
      */
     private fun checkIfBotpressTokenIsEmpty(callback: (Boolean) -> Unit) {
         val firestore = com.google.firebase.firestore.FirebaseFirestore.getInstance()
@@ -209,6 +211,9 @@ class CatbotFragment : Fragment() {
             }
     }
 
+    /**
+     * Signs the user out of Firebase
+     */
     private fun signOutUser() {
         FirebaseAuth.getInstance().signOut()
 
@@ -219,12 +224,17 @@ class CatbotFragment : Fragment() {
         startActivity(intent)
     }
 
+    /**
+     * Sends the user to the Firebase login page
+     */
     private fun redirectToLogin() {
         val intent = Intent(requireContext(), SignInActivity::class.java)
         startActivity(intent)
     }
 
-    // Custom adapter for the main ListView that holds sections with dates and messages
+    /**
+     * Custom adapter for the main ListView that holds sections with dates and messages
+     */
     inner class ParentListAdapter(context: Context, private val sections: List<ChatSection>) :
         ArrayAdapter<ChatSection>(context, 0, sections) {
 
