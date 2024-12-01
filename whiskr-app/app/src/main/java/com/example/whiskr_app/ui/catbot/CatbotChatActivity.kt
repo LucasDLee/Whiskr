@@ -32,6 +32,19 @@ class CatbotChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.catbot_individual_chat)
 
+        // Set up the Toolbar
+        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.AppBar)
+        setSupportActionBar(toolbar)
+
+        // Enable the back button functionality
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+
+        // Set the back button click listener
+        toolbar.setNavigationOnClickListener {
+            finish() // Navigates back to the previous screen
+        }
+
         // Set the token and Botpress URL
         getBotpressToken { token ->
             chatbotToken = token.toString()
