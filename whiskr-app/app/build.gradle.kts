@@ -1,11 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-<<<<<<< HEAD
     id("com.google.gms.google-services")
-=======
     id("org.jetbrains.kotlin.plugin.parcelize")
->>>>>>> victor-adoption-listing-fragment
 }
 
 android {
@@ -69,11 +66,8 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
-<<<<<<< HEAD
     implementation(libs.okhttp)
 
-=======
     // Rescuegroups.org API Helpers
     // Retrofit - For faster implementation of HTTPS requests and responses
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
@@ -81,5 +75,4 @@ dependencies {
 
     implementation("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
->>>>>>> victor-adoption-listing-fragment
 }
