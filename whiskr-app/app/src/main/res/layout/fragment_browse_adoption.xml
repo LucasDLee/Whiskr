@@ -5,68 +5,46 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:padding="16dp"
     >
 
     <TextView
+        android:id="@+id/fragmentBrowseAdoptionFilterBy"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:drawablePadding="8dp"
         android:text="Filter by"
         android:textStyle="bold"
         android:textSize="16sp"
-        android:layout_marginTop="4dp"
-        android:layout_marginStart="8dp"
+        android:padding="8dp"
+        app:drawableStartCompat="@drawable/baseline_filter_alt_24"
+    />
 
-        />
-    <LinearLayout
+    <TextView
+        android:id="@+id/fragmentsBrowseAdoptionEmpty"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="No Cats To Adopt"
+        android:visibility="gone"
         >
-        <Spinner
-            android:id="@+id/fragmentBrowseAdoptionSpinnerSex"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            />
-        <Spinner
-            android:id="@+id/fragmentBrowseAdoptionSpinnerAge"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
-        <Spinner
-            android:id="@+id/fragmentBrowseAdoptionSpinnerBreed"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-        />
-        <Spinner
-            android:id="@+id/fragmentBrowseAdoptionSpinnerDistance"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            />
-    </LinearLayout>
+
+    </TextView>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="8dp"
-        android:background="@color/cardview_dark_background"
-    />
+        android:background="@color/orange"
+        />
 
     <ListView
         android:id="@+id/fragmentBrowseAdoptionListView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:divider="@drawable/divider"
         android:dividerHeight="8dp"
-        android:background="@color/cardview_dark_background"
+        android:background="@color/orange"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         />
@@ -74,6 +52,6 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="8dp"
-        android:background="@color/cardview_dark_background"
+        android:background="@color/orange"
         />
 </LinearLayout>

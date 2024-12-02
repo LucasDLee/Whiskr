@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:layout_gravity="center"
+    >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select Province"
+        android:labelFor="@+id/fragmentBrowseAdoptionHomePostalCode"
+        android:gravity="center"
+        />
+
+    <Spinner
+        android:id="@+id/fragmentBrowseAdoptionHomeSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        />
+
+<!--    <EditText-->
+<!--        android:id="@+id/fragmentBrowseAdoptionHomePostalCode"-->
+<!--        android:layout_width="200dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:autofillHints="Postal Code"-->
+<!--        android:inputType="textPostalAddress"-->
+<!--        android:layout_gravity="center"-->
+<!--        />-->
+
+    <TextView
+        android:id="@+id/fragmentBrowseAdoptionHomePostalCodeError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Invald Postal Code"
+        android:textStyle="bold"
+        android:textColor="@color/red_error"
+        android:visibility="gone"
+        />
+
+    <Button
+        android:id="@+id/fragmentBrowseAdoptionHomeSubmit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Continue"
+        />
+
+</LinearLayout>
