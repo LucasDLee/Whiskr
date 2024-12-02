@@ -1,11 +1,13 @@
 package com.example.whiskr_app.ui.adoption.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ListView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -45,6 +47,8 @@ class RescueGroupsCatListings : Fragment() {
         selectProvince = " "
         selectAgeGroup = listOf("Baby", "Young", "Adult", "Senior")
         selectSex = listOf("Female", "Male")
+
+
 
         // Restore saved state
         if (savedInstanceState != null) {
@@ -90,17 +94,20 @@ class RescueGroupsCatListings : Fragment() {
         }
 
         catListView.setOnItemClickListener { _, _, position, _ ->
-            val selectedAnimal = catAdapter.getItem(position)
+            val selectedAnimal = catAdapter.getItem(position) as? AnimalData
             val extra = viewModel.included.value ?: emptyList()
-            val bundle = Bundle()
-            if (extra.isEmpty()) {
-                println("VC: include is empty")
+
+            if (selectedAnimal != null) {
+                val intent = Intent(requireContext(), DetailsActivity::class.java)
+                intent.putExtra("cat_detail", selectedAnimal)
+                intent.putParcelableArrayListExtra("cat_details_extra", ArrayList(extra))
+                startActivity(intent)
             } else {
-                bundle.putParcelable("cat_detail", (selectedAnimal as AnimalData))
-                bundle.putParcelableArrayList("cat_details_extra", ArrayList(extra))
-                findNavController().navigate(R.id.nav_adoption_details, bundle)
+                Toast.makeText(requireContext(), "Failed to load details.", Toast.LENGTH_SHORT).show()
             }
         }
+
+
 
         filter = view.findViewById(R.id.fragmentBrowseAdoptionFilterBy)
         filter.setOnClickListener {
