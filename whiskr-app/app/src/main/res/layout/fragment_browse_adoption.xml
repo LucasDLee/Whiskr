@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
+    android:background="@color/light_yellow"
     >
 
     <TextView
@@ -35,7 +36,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="8dp"
-        android:background="@color/orange"
+        android:background="@color/light_yellow"
         />
 
     <ListView
@@ -44,7 +45,7 @@
         android:layout_height="match_parent"
         android:divider="@drawable/divider"
         android:dividerHeight="8dp"
-        android:background="@color/orange"
+        android:background="@color/light_yellow"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         />
@@ -52,6 +53,6 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="8dp"
-        android:background="@color/orange"
+        android:background="@color/light_yellow"
         />
 </LinearLayout>

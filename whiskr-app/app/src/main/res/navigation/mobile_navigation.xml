@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.example.whiskr_app.ui.adoption.fragment.HomeFragment"
+        android:name="com.example.whiskr_app.ui.adoption.fragment.RescueGroupsCatListings"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_browse_adoption_home"/>
+        tools:layout="@layout/fragment_browse_adoption"/>
 
     <fragment
         android:id="@+id/nav_catmap"

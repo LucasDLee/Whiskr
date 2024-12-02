@@ -42,8 +42,7 @@ class RescueGroupsCatListings : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val selectedProvince = arguments?.getString("selectedProvince", " ")
-        selectProvince = selectedProvince.toString()
+        selectProvince = " "
         selectAgeGroup = listOf("Baby", "Young", "Adult", "Senior")
         selectSex = listOf("Female", "Male")
 
@@ -164,6 +163,9 @@ class RescueGroupsCatListings : Fragment() {
     }
 
     private fun applyFilters() {
+        if (selectProvince.isBlank()) {
+            selectProvince = "BC"
+        }
         val filters = mutableListOf(
             Filter("statuses.name", "equals", "Available"),
             Filter("species.singular", "equals", "Cat"),
