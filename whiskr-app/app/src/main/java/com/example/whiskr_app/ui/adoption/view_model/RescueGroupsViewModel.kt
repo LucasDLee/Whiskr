@@ -1,17 +1,18 @@
-package com.example.whiskr_app.ui.adoption
+package com.example.whiskr_app.ui.adoption.view_model
 
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.whiskr_app.ui.adoption.service.RetrofitClient
 import com.example.whiskr_app.ui.adoption.model.AnimalData
 import com.example.whiskr_app.ui.adoption.model.Filter
 import com.example.whiskr_app.ui.adoption.model.FilterData
+import com.example.whiskr_app.ui.adoption.model.FilterRadius
 import com.example.whiskr_app.ui.adoption.model.FilterRequest
 import com.example.whiskr_app.ui.adoption.model.IncludedItem
 import kotlinx.coroutines.launch
-
 
 class RescueGroupsViewModel : ViewModel() {
 
@@ -41,22 +42,17 @@ class RescueGroupsViewModel : ViewModel() {
         }
     }
 
-    fun fetchAnimals() {
+    fun fetchAnimalsByPostalCode(filter: List<Filter>, filterRadius: FilterRadius) {
         viewModelScope.launch {
             try {
                 // Perform the API call
-                val filters = listOf(
-                    Filter("statuses.name", "equals", "Available"),
-                    Filter("species.singular", "equals", "Cat"),
-                    Filter("locations.country", "equals", "Canada"),
-                    Filter("locations.state", "equals", "ON")
-                )
+                val filters = filter
 
-                val filterRequest = FilterRequest(FilterData(filters))
-                val response = apiService.getAvailableAnimals(filterRequest)
+                val filterRequest = FilterRequest(FilterData(filters, filterRadius))
+                val response = apiService.getAvailableAnimalsByPostalCode(filterRequest)
 
-                _animals.value = response.data // Post the data to LiveData
-                _included.value = response.included
+                _animals.postValue(response.data)  // Post the data to LiveData
+                _included.postValue(response.included)
                 Log.d("Animal Fetch Success", response.toString())
             } catch (e: Exception) {
                 Log.e("Animal Fetch Error", e.message.orEmpty())

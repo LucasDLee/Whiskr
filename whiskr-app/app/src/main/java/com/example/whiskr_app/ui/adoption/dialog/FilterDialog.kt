@@ -1,4 +1,4 @@
-package com.example.whiskr_app.ui.adoption
+package com.example.whiskr_app.ui.adoption.dialog
 
 import android.app.AlertDialog
 import android.content.Context
@@ -75,6 +75,7 @@ fun showProvinceAndFilterDialog(
 
     // Restore current selections
     postalCodeEditText.setText(currentPostalCode ?: "")
+    formatCanadianPostalCode(postalCodeEditText)
 
     // Pre-select the current province
     val currentProvinceIndex = provinces.indexOfFirst { it == currentProvince }
@@ -178,7 +179,7 @@ fun showProvinceAndFilterDialog(
     dialog.show()
 }
 
-    fun formatCanadianPostalCode(editText: EditText) {
+    private fun formatCanadianPostalCode(editText: EditText) {
         editText.addTextChangedListener(object : TextWatcher {
             private var isFormatting = false // Prevent recursive calls
 

@@ -17,7 +17,6 @@ data class AnimalData(
     val relationships: AnimalRelationships? // Relationships to other resources
 ) : Parcelable
 
-
 @Parcelize
 data class AnimalAttributes(
     val activityLevel: String?,            // Activity level of the animal
@@ -73,10 +72,9 @@ data class RelatedItem(
 
 @Parcelize
 data class IncludedItem(
-    val type: String,
+    val type: String, // To identify the type (e.g., "breeds", "colors")
     val id: String,
-    val attributes: IncludedAttributes,
-    val links: Links
+    val attributes: IncludedAttributes
 ) : Parcelable
 
 @Parcelize
@@ -103,15 +101,10 @@ data class IncludedAttributes(
     val coordinates: String? = null,
     val lat: Double? = null,
     val lon: Double? = null,
-    val resolutionX: Int? = null,
-    val resolutionY: Int? = null,
-    val filesize: Int? = null,
-    val imageUrl: String? = null
-) : Parcelable
-
-@Parcelize
-data class Links(
-    val self: String
+    val original: ImageSize? = null,
+    val large: ImageSize? = null,
+    val small: ImageSize? = null,
+    val type: String? = null,
 ) : Parcelable
 
 @Parcelize
@@ -129,3 +122,22 @@ data class ImageSize(
     val url: String
 ) : Parcelable
 
+// Organization attributes
+@Parcelize
+data class OrganizationAttributes(
+    val name: String?,
+    val street: String?,
+    val city: String?,
+    val state: String?,
+    val postalcode: String?,
+    val country: String?,
+    val phone: String?,
+    val url: String?,
+    val facebookUrl: String?,
+    val services: String?,
+    val type: String?,
+    val lat: Double?,
+    val lon: Double?,
+    val coordinates: String?,
+    val citystate: String?
+) : Parcelable

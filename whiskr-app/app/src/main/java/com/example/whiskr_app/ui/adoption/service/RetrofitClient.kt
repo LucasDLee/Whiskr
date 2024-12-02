@@ -1,6 +1,5 @@
-package com.example.whiskr_app.ui.adoption
+package com.example.whiskr_app.ui.adoption.service
 
-import com.example.whiskr_app.ui.adoption.service.RescueGroupsApiService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

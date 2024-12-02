@@ -4,22 +4,20 @@ import com.example.whiskr_app.ui.adoption.model.AnimalResponse
 import com.example.whiskr_app.ui.adoption.model.FilterRequest
 
 import retrofit2.http.Body
-import retrofit2.http.Headers
+import retrofit2.http.Header
 import retrofit2.http.POST
 
 interface RescueGroupsApiService {
-    @Headers(
-        "Content-Type: application/vnd.api+json",
-        "Authorization: ####"
-    )
 
-    @POST("public/animals/search/available&limit=5")
-    suspend fun getAvailableAnimals(
-        @Body filters: FilterRequest
+    @POST("public/animals/search/available/&include=pictures,orgs&limit=5")
+    suspend fun getAvailableAnimalsByPostalCode(
+        @Body filters: FilterRequest,
+        @Header("Authorization") token: String = TODO("API KEY")
     ): AnimalResponse
 
-    @POST("public/animals/search/available&limit=5")
-    suspend fun getAnimals(
-        @Body filters: FilterRequest
+    @POST("public/animals/search/available/&include=pictures,orgs&limit=5")
+    suspend fun getAvailableAnimals(
+        @Body filters: FilterRequest,
+        @Header("Authorization") token: String = TODO("API KEY")
     ): AnimalResponse
 }

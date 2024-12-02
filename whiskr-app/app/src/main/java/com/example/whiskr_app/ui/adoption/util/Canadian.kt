@@ -38,7 +38,6 @@ class Canadian {
         return provincesMap[abbreviation] ?: " "
     }
 
-
     fun getProvinces(): List<String> {
         return provinces
     }
