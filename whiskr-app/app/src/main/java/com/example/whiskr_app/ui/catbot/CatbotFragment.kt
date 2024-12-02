@@ -425,7 +425,7 @@ class CatbotFragment : Fragment() {
         if (selectedChatIds.isNotEmpty()) {
             binding.deleteButton.visibility = View.VISIBLE
         } else {
-            binding.deleteButton.visibility = View.GONE
+            binding.deleteButton.visibility = View.VISIBLE // change VISIBLE to GONE if you don't want it to show up
         }
     }
 }
