@@ -14,7 +14,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
 
-class ServiceNavigationHelper(private val apiKey: String = "AIzaSyBZ0DT2nirbxUwuK-nemjXtsUAwnPZE_Sk") {
+class ServiceNavigationHelper(private val apiKey: String = "TODO") {
 
     // Function to fetch directions between origin and destination
     suspend fun getDirections(origin: LatLng, destination: LatLng): List<LatLng> {
