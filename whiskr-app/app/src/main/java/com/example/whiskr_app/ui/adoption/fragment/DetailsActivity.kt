@@ -4,15 +4,12 @@ import android.os.Build
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.whiskr_app.R
@@ -21,29 +18,33 @@ import com.example.whiskr_app.ui.adoption.model.AnimalData
 import com.example.whiskr_app.ui.adoption.model.IncludedItem
 import com.example.whiskr_app.ui.adoption.model.OrganizationAttributes
 
-class DetailsFragment : Fragment() {
+class DetailsActivity : AppCompatActivity() {
     private lateinit var adoptNowButton: Button
     private lateinit var description: TextView
     private lateinit var pictureSlider: RecyclerView
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_details, container, false)
-    }
-
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_details)
 
-        description = view.findViewById(R.id.fragmentDetailsDescription)
+        // Set up the Toolbar
+        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.AppBar)
+        setSupportActionBar(toolbar)
 
-        val animalData = arguments?.getParcelable("cat_detail", AnimalData::class.java)
-        val includedData = arguments?.getParcelableArrayList(
-            "cat_details_extra", IncludedItem::class.java
-        )
+        // Enable the back button functionality
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+
+        // Set the back button click listener
+        toolbar.setNavigationOnClickListener {
+            finish() // Navigates back to the previous screen
+        }
+
+        description = findViewById(R.id.fragmentDetailsDescription)
+
+        val animalData = intent.getParcelableExtra<AnimalData>("cat_detail")
+        val includedData = intent.getParcelableArrayListExtra<IncludedItem>("cat_details_extra")
 
         val organizationData = animalData?.relationships?.orgs?.data
         val pictureData = animalData?.relationships?.pictures?.data
@@ -56,17 +57,17 @@ class DetailsFragment : Fragment() {
             }
         }
 
-        // grab organization info
+        // Grab organization info
         val organization = createOrganizationDetails(includedData, organizationId!!)
 
-        // grab images
+        // Grab images
         val images = getImagesFromIncludedItem(includedData, pictureListId)
         val imageUrls = images.toList()
 
-        // Set up picture slide view
-        pictureSlider = view.findViewById(R.id.detailsPictureSlide)
+        // Set up picture slider
+        pictureSlider = findViewById(R.id.detailsPictureSlide)
         pictureSlider.layoutManager = LinearLayoutManager(
-            requireContext(),
+            this,
             LinearLayoutManager.HORIZONTAL,
             false
         )
@@ -74,14 +75,12 @@ class DetailsFragment : Fragment() {
 
         val descriptionText = animalData.attributes.descriptionText
         if (descriptionText.isNullOrEmpty()) {
-            // Set to "No description available" and center it
             description.text = "No Description Available"
         } else {
-            // Set the description HTML
             description.text = descriptionText
         }
 
-        adoptNowButton = view.findViewById(R.id.button_adopt_now)
+        adoptNowButton = findViewById(R.id.button_adopt_now)
         adoptNowButton.setOnClickListener {
             showAdoptionDialog(organization!!)
         }
@@ -91,10 +90,9 @@ class DetailsFragment : Fragment() {
      * Builds the adoption dialog when a user chooses a cat to adopt
      */
     private fun showAdoptionDialog(organization: OrganizationAttributes) {
-        val dialogBuilder = AlertDialog.Builder(requireContext())
+        val dialogBuilder = AlertDialog.Builder(this)
 
-        // Create a TextView to display the message
-        val messageTextView = TextView(requireContext()).apply {
+        val messageTextView = TextView(this).apply {
             text = """
                 To complete your adoption request, please contact:
                 ${organization.name ?: " "}
@@ -104,11 +102,8 @@ class DetailsFragment : Fragment() {
                 ${organization.url ?: "Url Not Available"}
             """.trimIndent()
 
-            // Make links clickable
             autoLinkMask = Linkify.WEB_URLS
             movementMethod = LinkMovementMethod.getInstance()
-
-            // Add padding and styling
             setPadding(40, 20, 40, 20)
             textSize = 16f
         }
@@ -119,14 +114,13 @@ class DetailsFragment : Fragment() {
             .setPositiveButton("Done") { dialog, _ ->
                 // Handle the confirmation action
                 Toast.makeText(
-                    requireContext(),
+                    this,
                     "Thank you for using Whiskr!",
                     Toast.LENGTH_SHORT
                 ).show()
                 dialog.dismiss()
             }
 
-        // Show the dialog
         dialogBuilder.create().show()
     }
 
@@ -160,27 +154,24 @@ class DetailsFragment : Fragment() {
         if (includedData != null) {
             for (includedItem in includedData) {
                 if (includedItem.type == "orgs" && includedItem.id == organizationId) {
-                    val organizationAttributes = includedItem.attributes.let { attributes ->
-                        // Map the attributes to OrganizationAttributes
-                        OrganizationAttributes(
-                            name = attributes.name,
-                            street = attributes.street,
-                            city = attributes.city,
-                            state = attributes.state,
-                            postalcode = attributes.postalcode,
-                            country = attributes.country,
-                            phone = attributes.phone,
-                            url = attributes.url,
-                            facebookUrl = attributes.facebookUrl,
-                            services = attributes.services,
-                            type = attributes.type,  // Assuming 'type' field is not in IncludedAttributes
-                            lat = attributes.lat,
-                            lon = attributes.lon,
-                            coordinates = attributes.coordinates,
-                            citystate = attributes.citystate
-                        )
-                    }
-                    return organizationAttributes
+                    val attributes = includedItem.attributes
+                    return OrganizationAttributes(
+                        name = attributes.name,
+                        street = attributes.street,
+                        city = attributes.city,
+                        state = attributes.state,
+                        postalcode = attributes.postalcode,
+                        country = attributes.country,
+                        phone = attributes.phone,
+                        url = attributes.url,
+                        facebookUrl = attributes.facebookUrl,
+                        services = attributes.services,
+                        type = attributes.type,
+                        lat = attributes.lat,
+                        lon = attributes.lon,
+                        coordinates = attributes.coordinates,
+                        citystate = attributes.citystate
+                    )
                 }
             }
         }

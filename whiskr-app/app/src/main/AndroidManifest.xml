@@ -5,6 +5,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
+
+
 
     <application
         android:allowBackup="true"
@@ -30,6 +33,7 @@
 
         <activity android:name=".ui.catbot.SignInActivity" />
         <activity android:name=".ui.catbot.CatbotChatActivity" />
+        <activity android:name=".ui.adoption.fragment.DetailsActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
