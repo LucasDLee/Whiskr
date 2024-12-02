@@ -87,6 +87,9 @@ class DetailsFragment : Fragment() {
         }
     }
 
+    /**
+     * Builds the adoption dialog when a user chooses a cat to adopt
+     */
     private fun showAdoptionDialog(organization: OrganizationAttributes) {
         val dialogBuilder = AlertDialog.Builder(requireContext())
 
@@ -127,6 +130,9 @@ class DetailsFragment : Fragment() {
         dialogBuilder.create().show()
     }
 
+    /**
+     * Generates the image for each cat from the API
+     */
     private fun getImagesFromIncludedItem(
         includedData: ArrayList<IncludedItem>?,
         pictureListId: ArrayList<String>
@@ -144,6 +150,9 @@ class DetailsFragment : Fragment() {
         return imageOriginalUrlList
     }
 
+    /**
+     * Formats the organization's details from the API
+     */
     private fun createOrganizationDetails(
         includedData: ArrayList<IncludedItem>?,
         organizationId: String

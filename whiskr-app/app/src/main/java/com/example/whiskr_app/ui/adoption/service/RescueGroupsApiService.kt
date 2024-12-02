@@ -12,12 +12,12 @@ interface RescueGroupsApiService {
     @POST("public/animals/search/available/&include=pictures,orgs&limit=5")
     suspend fun getAvailableAnimalsByPostalCode(
         @Body filters: FilterRequest,
-        @Header("Authorization") token: String = TODO("API_KEY")
+        @Header("Authorization") token: String = "UOFo9waa" //TODO("API_KEY")
     ): AnimalResponse
 
     @POST("public/animals/search/available/&include=pictures,orgs&limit=5")
     suspend fun getAvailableAnimals(
         @Body filters: FilterRequest,
-        @Header("Authorization") token: String = TODO("API_KEY")
+        @Header("Authorization") token: String = "UOFo9waa" // TODO("API_KEY")
     ): AnimalResponse
 }

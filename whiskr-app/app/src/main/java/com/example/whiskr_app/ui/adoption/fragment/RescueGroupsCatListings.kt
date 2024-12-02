@@ -40,6 +40,9 @@ class RescueGroupsCatListings : Fragment() {
         return inflater.inflate(R.layout.fragment_browse_adoption, container, false)
     }
 
+    /**
+     * Builds the adoption filter UI
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         selectProvince = " "
@@ -143,6 +146,9 @@ class RescueGroupsCatListings : Fragment() {
         outState.putStringArrayList("selectedSexGroup", ArrayList(selectSex))
     }
 
+    /**
+     * Uses postal code as the filter
+     */
     private fun applyFiltersPostalCode() {
         val filters = mutableListOf(
             Filter("statuses.name", "equals", "Available"),
@@ -162,6 +168,9 @@ class RescueGroupsCatListings : Fragment() {
         viewModel.fetchAnimalsByPostalCode(filters, filterRadius)
     }
 
+    /**
+     * Enables filters for the user
+     */
     private fun applyFilters() {
         if (selectProvince.isBlank()) {
             selectProvince = "BC"

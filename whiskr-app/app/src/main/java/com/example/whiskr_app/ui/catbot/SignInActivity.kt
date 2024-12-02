@@ -39,7 +39,6 @@ class SignInActivity : AppCompatActivity() {
             AuthUI.IdpConfig.GoogleBuilder().build()
         )
 
-
         val signInIntent = AuthUI.getInstance()
             .createSignInIntentBuilder()
             .setLogo(R.drawable.icon_sign_in_text)
