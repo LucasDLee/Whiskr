@@ -19,6 +19,7 @@ import com.example.whiskr_app.MainActivity
 import com.example.whiskr_app.R
 import com.example.whiskr_app.databinding.FragmentCatbotAllChatsBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
@@ -35,6 +36,8 @@ class CatbotFragment : Fragment() {
     private lateinit var chatViewModel: ChatViewModel
     private lateinit var parentListAdapter: ParentListAdapter
     private val auth = FirebaseAuth.getInstance()
+    private val selectedChatIds = mutableListOf<String>()
+
 
     // Botpress API
     private var client: OkHttpClient = OkHttpClient()
@@ -80,16 +83,6 @@ class CatbotFragment : Fragment() {
                 parentListAdapter = ParentListAdapter(requireContext(), chatSections)
                 allChatMessages.adapter = parentListAdapter
 
-                // Handle clicks on a chat to open the Chat Activity
-                allChatMessages.setOnItemClickListener { _, _, position, _ ->
-                    val selectedChatId = parentListAdapter.getChatId(position)
-                    val selectedChatTitle = parentListAdapter.getItem(position)?.title
-
-                    val intent = Intent(requireContext(), CatbotChatActivity::class.java)
-                    intent.putExtra("chat_id", selectedChatId)
-                    intent.putExtra("chat_title", selectedChatTitle)
-                    startActivity(intent)
-                }
             }
         }
 
@@ -105,6 +98,23 @@ class CatbotFragment : Fragment() {
         val signOutButton: Button = binding.signOutButton
         signOutButton.setOnClickListener {
             signOutUser()
+        }
+
+        val deleteButton: Button = binding.deleteButton
+        deleteButton.setOnClickListener {
+            if (selectedChatIds.isNotEmpty()) {
+                // Confirm deletion
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Delete Chats")
+                    .setMessage("Are you sure you want to delete the selected chats?")
+                    .setPositiveButton("Delete") { _, _ ->
+                        deleteSelectedChats()
+                    }
+                    .setNegativeButton("Cancel", null)
+                    .show()
+            } else {
+                Toast.makeText(requireContext(), "Long press the chat to select.", Toast.LENGTH_SHORT).show()
+            }
         }
 
         return root
@@ -215,10 +225,8 @@ class CatbotFragment : Fragment() {
      * Signs the user out of Firebase
      */
     private fun signOutUser() {
-        FirebaseAuth.getInstance().signOut()
-
+        auth.signOut()
         Toast.makeText(requireContext(), "You have been signed out.", Toast.LENGTH_SHORT).show()
-
         // Navigate back to Home Page
         val intent = Intent(requireContext(), MainActivity::class.java)
         startActivity(intent)
@@ -245,6 +253,44 @@ class CatbotFragment : Fragment() {
             val section = sections[position]
             val chatTitleText = view.findViewById<TextView>(R.id.catbot_chats_title)
             chatTitleText.text = section.title
+
+            // Set up long-press event for selection
+            view.setOnLongClickListener {
+                if (selectedChatIds.contains(section.chatId)) {
+                    selectedChatIds.remove(section.chatId) // Deselect chat
+                    view.setBackgroundColor(context.getColor(android.R.color.transparent))
+                } else {
+                    selectedChatIds.add(section.chatId) // Select chat
+                    view.setBackgroundColor(context.getColor(android.R.color.holo_orange_light))
+                }
+                notifyDataSetChanged()
+                handleDeleteButtonVisibility()
+                true // Indicate the long-click is handled
+            }
+
+            // Set up regular click event
+            view.setOnClickListener {
+                if (selectedChatIds.isNotEmpty()) {
+                    // In selection mode, clicking toggles selection
+                    if (selectedChatIds.contains(section.chatId)) {
+                        selectedChatIds.remove(section.chatId)
+                        view.setBackgroundColor(context.getColor(android.R.color.transparent))
+                    } else {
+                        selectedChatIds.add(section.chatId)
+                        view.setBackgroundColor(context.getColor(android.R.color.holo_orange_light))
+                    }
+                    notifyDataSetChanged()
+                    handleDeleteButtonVisibility()
+                } else {
+                    // Not in selection mode, proceed to chat activity
+                    val intent = Intent(context, CatbotChatActivity::class.java)
+                    intent.putExtra("chat_id", section.chatId)
+                    intent.putExtra("chat_title", section.title)
+                    context.startActivity(intent)
+                }
+            }
+
+
 
             return view
         }
@@ -295,8 +341,6 @@ class CatbotFragment : Fragment() {
      * Create a new chat in the database
      */
     private fun createChatInDatabase(chatTitle: String) {
-        val finalTitle = chatTitle ?: "Untitled Chat"
-        // Default to "Untitled Chat" if no title is provided
         val chatId = java.util.UUID.randomUUID().toString()
 
         // Create the conversation in Botpress
@@ -321,5 +365,57 @@ class CatbotFragment : Fragment() {
         intent.putExtra("chat_title", chatTitle)
         startActivity(intent)
     }
+
+    private fun deleteSelectedChats() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId == null) {
+            Toast.makeText(requireContext(), "User not logged in.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val db = FirebaseFirestore.getInstance()
+        val userChatsRef = db.collection("users").document(userId).collection("chats")
+
+        // Delete each selected chat
+        for (chatId in selectedChatIds) {
+            // Delete the messages sub-collection
+            val messagesRef = userChatsRef.document(chatId).collection("messages")
+            messagesRef.get().addOnSuccessListener { snapshot ->
+                for (document in snapshot.documents) {
+                    document.reference.delete() // Delete each message document
+                }
+
+                // Delete the chat document after deleting messages
+                userChatsRef.document(chatId).delete()
+                    .addOnSuccessListener {
+                        // Chat deleted successfully
+                        selectedChatIds.remove(chatId)
+                        chatViewModel.loadChatSections() // Reload chat list
+                        Toast.makeText(requireContext(), "Chat deleted.", Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnFailureListener { e ->
+                        // Handle failure
+                        Toast.makeText(requireContext(), "Failed to delete chat: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+            }.addOnFailureListener { e ->
+                // Handle failure to retrieve sub-collection
+                Toast.makeText(requireContext(), "Failed to load messages for deletion: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        // Clear selection after deletion
+        selectedChatIds.clear()
+        handleDeleteButtonVisibility()
+    }
+
+    private fun handleDeleteButtonVisibility() {
+        if (selectedChatIds.isNotEmpty()) {
+            binding.deleteButton.visibility = View.VISIBLE
+        } else {
+            binding.deleteButton.visibility = View.GONE
+        }
+    }
+
+
 }
 

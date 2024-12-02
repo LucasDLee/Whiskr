@@ -21,13 +21,14 @@ class ChatViewModel : ViewModel() {
         val uid = userId ?: return
         db.collection("users").document(uid).collection("chats").get()
             .addOnSuccessListener { documents ->
-                val sections = mutableMapOf<String, String>() // Chat ID to Title map
-                for (document in documents) {
+                val sections = documents.mapNotNull { document ->
                     val chatId = document.id
                     val title = document.getString("title") ?: "Untitled Chat"
-                    sections[chatId] = title
-                }
-                chatTitles.postValue(sections) // Update LiveData with chat titles
+                    chatId to title
+                }.sortedBy { it.second.lowercase() } // Sort by title alphabetically
+                    .toMap() // Convert back to a map
+
+                chatTitles.postValue(sections)
             }
             .addOnFailureListener { error ->
                 chatTitles.postValue(emptyMap())
