@@ -3,7 +3,10 @@ package com.example.whiskr_app.ui.catmap
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,23 +14,31 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.whiskr_app.R
 import com.example.whiskr_app.databinding.FragmentCatmapBinding
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.Polyline
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -46,7 +57,7 @@ class CatmapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var googleMap: GoogleMap
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
-    private var currentMarker: Marker? = null
+    private var userLocationMarker: Marker? = null
     private var lastPolyline: Polyline? = null
     private val navigationHelper: ServiceNavigationHelper by lazy {
         ServiceNavigationHelper()
@@ -60,18 +71,7 @@ class CatmapFragment : Fragment(), OnMapReadyCallback {
         _binding = FragmentCatmapBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        serviceSpinner = root.findViewById(R.id.spinner_filter)
-        findButton = root.findViewById(R.id.button_find)
-
-        setupServiceSpinner()
-
-        findButton.setOnClickListener {
-            val selectedService = serviceSpinner.selectedItem.toString()
-            Toast.makeText(requireContext(), "Searching for: $selectedService", Toast.LENGTH_SHORT).show()
-            searchNearby(selectedService)
-        }
-
-        mapView = root.findViewById(R.id.map_view)
+        setupUI(root)
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
 
@@ -79,36 +79,26 @@ class CatmapFragment : Fragment(), OnMapReadyCallback {
         return root
     }
 
-    @SuppressLint("MissingPermission")
-    override fun onMapReady(map: GoogleMap) {
-        googleMap = map
-        enableMyLocation()
+    private fun setupUI(root: View) {
+        serviceSpinner = root.findViewById(R.id.spinner_filter)
+        findButton = root.findViewById(R.id.button_find)
+        mapView = root.findViewById(R.id.map_view)
 
-        // Set the info window adapter
-        val locationInfoAdapter = LocationInfoAdapter(requireContext())
-        googleMap.setInfoWindowAdapter(locationInfoAdapter)
-
-        googleMap.setOnMarkerClickListener { marker ->
-            currentMarker = marker
-            marker.showInfoWindow()
-
-            lastPolyline?.remove()
-            CoroutineScope(Dispatchers.IO).launch {
-                fusedLocationClient.lastLocation.await()?.let { location ->
-                    val origin = LatLng(location.latitude, location.longitude)
-                    withContext(Dispatchers.Main) {
-                        drawRoute(origin, marker.position)
-                    }
-                } ?: run {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(requireContext(), "Current location not available", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-            true
+        setupServiceSpinner()
+        findButton.setOnClickListener {
+            val selectedService = serviceSpinner.selectedItem.toString()
+            Toast.makeText(requireContext(), "Searching for: $selectedService", Toast.LENGTH_SHORT).show()
+            searchNearby(selectedService)
         }
     }
 
+    override fun onMapReady(map: GoogleMap) {
+        googleMap = map
+        enableMyLocation()
+        setupMapListeners()
+    }
+
+    @SuppressLint("MissingPermission")
     private fun enableMyLocation() {
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
@@ -116,7 +106,7 @@ class CatmapFragment : Fragment(), OnMapReadyCallback {
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             googleMap.isMyLocationEnabled = true
-            getCurrentLocation()
+            startLocationUpdates()
         } else {
             requestPermissions(
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
@@ -125,34 +115,68 @@ class CatmapFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    private fun getCurrentLocation() {
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            googleMap.isMyLocationEnabled = true
-            CoroutineScope(Dispatchers.IO).launch {
-                fusedLocationClient.lastLocation.await()?.let {
-                    val userLocation = LatLng(it.latitude, it.longitude)
-                    withContext(Dispatchers.Main) {
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 12f))
-                    }
-                } ?: run {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(
-                            requireContext(),
-                            "Unable to get current location",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+    private fun showBottomSheetDialog(marker: Marker) {
+        val bottomSheetDialog = BottomSheetDialog(requireContext())
+        val view = LayoutInflater.from(requireContext()).inflate(R.layout.location_info_layout, null)
+
+        val locationName = view.findViewById<TextView>(R.id.location_name)
+        val locationAddress = view.findViewById<TextView>(R.id.location_address)
+        val navigateButton = view.findViewById<Button>(R.id.button_navigation)
+
+        locationName.text = marker.title
+        locationAddress.text = marker.snippet
+
+        navigateButton.setOnClickListener {
+            val destination = marker.position
+            // Use navigationHelper to launch the navigation in Gmaps
+            navigationHelper.launchNavigation(requireContext(), destination)
+            bottomSheetDialog.dismiss() // Dismiss the bottom sheet after navigation
+        }
+
+        bottomSheetDialog.setContentView(view)
+        bottomSheetDialog.show()
+    }
+
+    private fun setupMapListeners() {
+        googleMap.setOnMarkerClickListener { marker ->
+            showBottomSheetDialog(marker)
+            true
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun startLocationUpdates() {
+        val locationRequest = LocationRequest.create().apply {
+            interval = 10000
+            fastestInterval = 5000
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        }
+
+        val locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                super.onLocationResult(locationResult)
+                locationResult.lastLocation?.let {
+                    updateUserLocationMarker(LatLng(it.latitude, it.longitude))
                 }
             }
-        } else {
-            requestPermissions(
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
-                LOCATION_PERMISSION_REQUEST_CODE
+        }
+
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
+    }
+
+    private fun updateUserLocationMarker(latLng: LatLng) {
+        val customIcon = getCustomIcon(R.drawable.current_location_icon, 48, 48)
+
+        if (userLocationMarker == null) {
+            userLocationMarker = googleMap.addMarker(
+                MarkerOptions()
+                    .position(latLng)
+                    .title("You are here")
+                    .icon(customIcon)
             )
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+        } else {
+            userLocationMarker?.position = latLng
         }
     }
 
@@ -164,6 +188,15 @@ class CatmapFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun searchNearby(service: String) {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            showToast("Location permission not granted")
+            return
+        }
+
         val serviceToQuery = mapOf(
             "Vet Clinic" to "veterinary care",
             "Shelter" to "animal shelter",
@@ -174,93 +207,64 @@ class CatmapFragment : Fragment(), OnMapReadyCallback {
             else -> serviceToQuery[service] ?: service
         }
 
-        // Check if location permission is granted
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            // Start a coroutine to perform the background task
-            CoroutineScope(Dispatchers.IO).launch {
-                try {
-                    // Await the result of the last known location
-                    val location = fusedLocationClient.lastLocation.await()
-
-                    location?.let {
-                        val currentLocation = LatLng(it.latitude, it.longitude)
-                        val searchHelper = ServiceSearchHelper(currentLocation, query = query)
-
-                        // Perform the place search asynchronously
-                        searchHelper.findPlaces { places ->
-                            // Switch back to the main thread to update UI
-                            CoroutineScope(Dispatchers.Main).launch {
-                                Log.d("CatmapFragment", "Found ${places.size} places for query: $query")
-                                if (places.isEmpty()) {
-                                    Toast.makeText(requireContext(), "No places found for $service", Toast.LENGTH_SHORT).show()
-                                } else {
-                                    updateMapMarkers(places)
-                                }
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val location = fusedLocationClient.lastLocation.await()
+                if (location != null) {
+                    val searchHelper = ServiceSearchHelper(
+                        LatLng(location.latitude, location.longitude),
+                        query
+                    )
+                    searchHelper.findPlaces { places ->
+                        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                            if (places.isEmpty()) {
+                                showToast("No places found for $service")
+                            } else {
+                                updateMapMarkers(places)
                             }
                         }
-                    } ?: run {
-                        // Handle case where location is null
-                        CoroutineScope(Dispatchers.Main).launch {
-                            Toast.makeText(requireContext(), "Unable to get current location", Toast.LENGTH_SHORT).show()
-                        }
                     }
-                } catch (e: Exception) {
-                    // Handle exception if any error occurs during the location fetch or search
-                    CoroutineScope(Dispatchers.Main).launch {
-                        Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                } else {
+                    withContext(Dispatchers.Main) {
+                        showToast("Unable to get current location")
                     }
                 }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    showToast("Error: ${e.message}")
+                }
             }
-        } else {
-            // Handle the case when permission is not granted
-            Toast.makeText(requireContext(), "Location permission not granted", Toast.LENGTH_SHORT).show()
         }
     }
 
 
     private fun updateMapMarkers(places: List<SearchResult>) {
         googleMap.clear()
-
         val boundsBuilder = LatLngBounds.Builder()
-        for (place in places) {
-            val marker = googleMap.addMarker(
+        places.forEach { place ->
+            googleMap.addMarker(
                 MarkerOptions()
                     .position(place.location)
                     .title(place.name)
                     .snippet(place.address)
-            )
-            boundsBuilder.include(marker!!.position)
+            )?.let { boundsBuilder.include(it.position) }
         }
-
         if (places.isNotEmpty()) {
-            val bounds = boundsBuilder.build()
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 100))
         }
     }
 
-    private fun drawRoute(origin: LatLng, destination: LatLng) {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val routePoints = navigationHelper.getDirections(origin, destination)
-                withContext(Dispatchers.Main) {
-                    lastPolyline?.remove()
-                    if (routePoints.isNotEmpty()) {
-                        val polylineOptions = navigationHelper.createRoutePolyline(routePoints)
-                        lastPolyline = googleMap.addPolyline(polylineOptions)
-                    } else {
-                        Toast.makeText(requireContext(), "Unable to fetch route", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), "Error fetching route: ${e.message}", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
+    private fun getCustomIcon(resourceId: Int, width: Int, height: Int): BitmapDescriptor {
+        val drawable = ContextCompat.getDrawable(requireContext(), resourceId)!!
+        val bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
+        return BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(bitmap, width, height, false))
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
     override fun onPause() {
@@ -282,4 +286,3 @@ class CatmapFragment : Fragment(), OnMapReadyCallback {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1000
     }
 }
-

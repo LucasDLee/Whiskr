@@ -2,12 +2,10 @@ package com.example.whiskr_app.ui.catmap
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.PolylineOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
@@ -70,23 +68,16 @@ class ServiceNavigationHelper(private val apiKey: String = "AIzaSyBZ0DT2nirbxUwu
         return routePoints
     }
 
-    // Function to generate PolylineOptions from route points
-    fun createRoutePolyline(routePoints: List<LatLng>): PolylineOptions {
-        return PolylineOptions().addAll(routePoints).color(Color.BLUE).width(10f)
-    }
-
-    // Function to launch Google Maps for navigation
+    // To launch GMaps for navigation
     fun launchNavigation(context: Context, destination: LatLng) {
         val gmmIntentUri = Uri.parse("google.navigation:q=${destination.latitude},${destination.longitude}")
         val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
         mapIntent.setPackage("com.google.android.apps.maps")
         context.startActivity(mapIntent)
         if (mapIntent.resolveActivity(context.packageManager) != null) {
-            Log.d("NavigationHelper", "Launching navigation to $destination")
             context.startActivity(mapIntent)
         } else {
-            Log.e("NavigationHelper", "Google Maps app is not installed")
-            Toast.makeText(context, "Google Maps app is not installed", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Please install Google Maps", Toast.LENGTH_SHORT).show()
         }
     }
 
