@@ -366,6 +366,9 @@ class CatbotFragment : Fragment() {
         startActivity(intent)
     }
 
+    /**
+     * Find a chat and delete it in both Firebase and Botpress
+     */
     private fun deleteSelectedChats() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         if (userId == null) {
@@ -390,6 +393,16 @@ class CatbotFragment : Fragment() {
                     .addOnSuccessListener {
                         // Chat deleted successfully
                         selectedChatIds.remove(chatId)
+                        val deleteConversationInBotPress = Request.Builder()
+                            .url("https://chat.botpress.cloud/${chatbotConnectionUrl}/conversations/${chatId}")
+                            .delete(null)
+                            .addHeader("accept", "application/json")
+                            .addHeader("x-user-key", chatbotToken)
+                            .build()
+
+                        Thread {
+                            client.newCall(deleteConversationInBotPress).execute()
+                        }.start()
                         chatViewModel.loadChatSections() // Reload chat list
                         Toast.makeText(requireContext(), "Chat deleted.", Toast.LENGTH_SHORT).show()
                     }
@@ -415,7 +428,4 @@ class CatbotFragment : Fragment() {
             binding.deleteButton.visibility = View.GONE
         }
     }
-
-
 }
-
