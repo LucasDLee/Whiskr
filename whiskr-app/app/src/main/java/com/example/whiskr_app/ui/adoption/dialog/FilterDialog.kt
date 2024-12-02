@@ -179,6 +179,9 @@ fun showProvinceAndFilterDialog(
     dialog.show()
 }
 
+    /**
+     * Ensure the Canadian Postal Code follows a specific format
+     */
     private fun formatCanadianPostalCode(editText: EditText) {
         editText.addTextChangedListener(object : TextWatcher {
             private var isFormatting = false // Prevent recursive calls

@@ -86,6 +86,9 @@ class DetailsActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Builds the adoption dialog when a user chooses a cat to adopt
+     */
     private fun showAdoptionDialog(organization: OrganizationAttributes) {
         val dialogBuilder = AlertDialog.Builder(this)
 
@@ -121,6 +124,9 @@ class DetailsActivity : AppCompatActivity() {
         dialogBuilder.create().show()
     }
 
+    /**
+     * Generates the image for each cat from the API
+     */
     private fun getImagesFromIncludedItem(
         includedData: ArrayList<IncludedItem>?,
         pictureListId: ArrayList<String>
@@ -138,6 +144,9 @@ class DetailsActivity : AppCompatActivity() {
         return imageOriginalUrlList
     }
 
+    /**
+     * Formats the organization's details from the API
+     */
     private fun createOrganizationDetails(
         includedData: ArrayList<IncludedItem>?,
         organizationId: String

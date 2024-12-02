@@ -6,6 +6,9 @@ class Canadian {
         "Nova Scotia", "Ontario", "Prince Edward Island", "Quebec", "Saskatchewan"
     )
 
+    /**
+     * Adds abbreviations to provinces for filtering
+     */
     fun getProvinceAbbreviation(province: String): String {
         val provincesMap = mapOf(
             "Alberta" to "AB",
@@ -22,6 +25,9 @@ class Canadian {
         return provincesMap[province] ?: " "
     }
 
+    /**
+     * Translates province abbreviations to full name for legibility
+     */
     fun getProvinceName(abbreviation: String): String {
         val provincesMap = mapOf(
             "AB" to "Alberta",

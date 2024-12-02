@@ -46,7 +46,9 @@ class ChatAdapter(private val context: Context, private var messages: MutableLis
         return view
     }
 
-
+    /**
+     * Display the updated messages onto the app
+     */
     fun updateMessages(newMessages: List<ChatMessage>) {
         messages.clear()  // Clear the existing messages
         messages.addAll(newMessages)  // Add the new messages
