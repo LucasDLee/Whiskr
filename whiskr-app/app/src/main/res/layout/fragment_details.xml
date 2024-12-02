@@ -6,40 +6,15 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <HorizontalScrollView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/detailsPictureSlide"
+        android:layout_marginTop="24dp"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:scrollbars="none"
-        android:paddingTop="16dp">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="200dp"
-                android:layout_height="match_parent"
-                android:src="@drawable/cat2"
-                android:scaleType="centerCrop"
-                android:layout_marginEnd="8dp" />
-
-            <ImageView
-                android:layout_width="200dp"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="8dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/cat1" />
-
-            <ImageView
-                android:layout_width="200dp"
-                android:layout_height="match_parent"
-                android:src="@drawable/cat3"
-                android:scaleType="centerCrop"
-                android:layout_marginEnd="8dp" />
-
-        </LinearLayout>
-    </HorizontalScrollView>
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:scrollbars="horizontal"
+        android:background="@drawable/rounded_recyclerview_background"
+        />
 
     <Button
         android:id="@+id/button_adopt_now"
@@ -49,7 +24,8 @@
         android:layout_gravity="end"
         android:backgroundTint="@color/orange"
         android:text="Adopt Now!"
-        android:textColor="@android:color/white" />
+        android:textColor="@android:color/white"
+    />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -57,17 +33,30 @@
         android:layout_marginTop="16dp"
         android:fillViewport="true">
 
-        <TextView
-            android:id="@+id/textview_cat_description"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Days in care: 67\n\nBreed: Bengal\n\nSex: Female\n\nColour: Spotted / Brown\n\nWeight: 3.19 kg\n\nApproximate age: 12 years old\n\nLocation: Cowichan, Duncan B.C.\n\nOur long-term resident senior Bengal who knows exactly what she wants — your undivided attention! This chatty sweetheart isn’t afraid to speak her mind (or her heart) when it comes to asking for the love she deserves.
+            android:orientation="vertical">
 
-Mildred’s ideal home is one where she’s the star of the show, she prefers to fly solo, as she’s still working on her communication skills with other animals. Though with humans, she’s a pro at making sure you know when it’s time for pets, play, and plenty of pampering.
 
-Despite her age, Mildred is full of life and enjoys cozy sunspots, gentle playtime, and cuddles. She’s looking for a loving forever home where she can bask in affection and enjoy her golden years. Mildred currently has early-stage kidney concerns and likely has some hearing loss, so she will need a little extra care and attention, but her loving "
-            android:textSize="16sp"
-            android:textColor="@android:color/black"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Description"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:layout_marginBottom="12dp"
+            />
+
+            <TextView
+                android:id="@+id/fragmentDetailsDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Description"
+                android:textSize="16sp"
+                android:textColor="@android:color/black"/>
+        </LinearLayout>
     </ScrollView>
 
 </LinearLayout>
