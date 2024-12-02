@@ -15,7 +15,7 @@ class ServiceSearchHelper(
     private val location: LatLng,
     private val query: String? = null,
 ) {
-    private val apiKey = "TODO"
+    private val apiKey = "PASTE GMAPS API KEY HERE"
     private val client = OkHttpClient()
 
     fun findPlaces(callback: (List<SearchResult>) -> Unit) {
