@@ -58,7 +58,6 @@ class CatmapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     private var userLocationMarker: Marker? = null
-    private var lastPolyline: Polyline? = null
     private val navigationHelper: ServiceNavigationHelper by lazy {
         ServiceNavigationHelper()
     }
@@ -67,7 +66,7 @@ class CatmapFragment : Fragment(), OnMapReadyCallback {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         _binding = FragmentCatmapBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
@@ -87,7 +86,9 @@ class CatmapFragment : Fragment(), OnMapReadyCallback {
         setupServiceSpinner()
         findButton.setOnClickListener {
             val selectedService = serviceSpinner.selectedItem.toString()
-            Toast.makeText(requireContext(), "Searching for: $selectedService", Toast.LENGTH_SHORT).show()
+            if (isAdded) {
+                Toast.makeText(requireContext(), "Searching for: $selectedService", Toast.LENGTH_SHORT).show()
+            }
             searchNearby(selectedService)
         }
     }
@@ -100,7 +101,7 @@ class CatmapFragment : Fragment(), OnMapReadyCallback {
 
     @SuppressLint("MissingPermission")
     private fun enableMyLocation() {
-        if (ContextCompat.checkSelfPermission(
+        if (isAdded && context != null && ContextCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
@@ -116,25 +117,27 @@ class CatmapFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun showBottomSheetDialog(marker: Marker) {
-        val bottomSheetDialog = BottomSheetDialog(requireContext())
-        val view = LayoutInflater.from(requireContext()).inflate(R.layout.location_info_layout, null)
+        if (isAdded && context != null) {
+            val bottomSheetDialog = BottomSheetDialog(requireContext())
+            val view = LayoutInflater.from(requireContext()).inflate(R.layout.location_info_layout, null)
 
-        val locationName = view.findViewById<TextView>(R.id.location_name)
-        val locationAddress = view.findViewById<TextView>(R.id.location_address)
-        val navigateButton = view.findViewById<Button>(R.id.button_navigation)
+            val locationName = view.findViewById<TextView>(R.id.location_name)
+            val locationAddress = view.findViewById<TextView>(R.id.location_address)
+            val navigateButton = view.findViewById<Button>(R.id.button_navigation)
 
-        locationName.text = marker.title
-        locationAddress.text = marker.snippet
+            locationName.text = marker.title
+            locationAddress.text = marker.snippet
 
-        navigateButton.setOnClickListener {
-            val destination = marker.position
-            // Use navigationHelper to launch the navigation in Gmaps
-            navigationHelper.launchNavigation(requireContext(), destination)
-            bottomSheetDialog.dismiss() // Dismiss the bottom sheet after navigation
+            navigateButton.setOnClickListener {
+                val destination = marker.position
+                // Use navigationHelper to launch the navigation in Gmaps
+                navigationHelper.launchNavigation(requireContext(), destination)
+                bottomSheetDialog.dismiss() // Dismiss the bottom sheet after navigation
+            }
+
+            bottomSheetDialog.setContentView(view)
+            bottomSheetDialog.show()
         }
-
-        bottomSheetDialog.setContentView(view)
-        bottomSheetDialog.show()
     }
 
     private fun setupMapListeners() {
@@ -155,8 +158,10 @@ class CatmapFragment : Fragment(), OnMapReadyCallback {
         val locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 super.onLocationResult(locationResult)
-                locationResult.lastLocation?.let {
-                    updateUserLocationMarker(LatLng(it.latitude, it.longitude))
+                locationResult.lastLocation.let {
+                    if (isAdded) {
+                        updateUserLocationMarker(LatLng(it.latitude, it.longitude))
+                    }
                 }
             }
         }
@@ -165,94 +170,104 @@ class CatmapFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun updateUserLocationMarker(latLng: LatLng) {
-        val customIcon = getCustomIcon(R.drawable.current_location_icon, 48, 48)
+        if (isAdded && context != null) {
+            val customIcon = getCustomIcon(R.drawable.current_location_icon, 48, 48)
 
-        if (userLocationMarker == null) {
-            userLocationMarker = googleMap.addMarker(
-                MarkerOptions()
-                    .position(latLng)
-                    .title("You are here")
-                    .icon(customIcon)
-            )
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
-        } else {
-            userLocationMarker?.position = latLng
+            if (userLocationMarker == null) {
+                userLocationMarker = googleMap.addMarker(
+                    MarkerOptions()
+                        .position(latLng)
+                        .title("You are here")
+                        .icon(customIcon)
+                )
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+            } else {
+                userLocationMarker?.position = latLng
+            }
         }
     }
 
     private fun setupServiceSpinner() {
-        val serviceOptions = resources.getStringArray(R.array.filter_options)
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, serviceOptions)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        serviceSpinner.adapter = adapter
+        if (isAdded && context != null) {
+            val serviceOptions = resources.getStringArray(R.array.filter_options)
+            val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, serviceOptions)
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            serviceSpinner.adapter = adapter
+        }
     }
 
+    @SuppressLint("MissingPermission")
     private fun searchNearby(service: String) {
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            showToast("Location permission not granted")
-            return
-        }
+        if (isAdded && context != null) {
+            if (ActivityCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                showToast("Location permission not granted")
+                return
+            }
 
-        val serviceToQuery = mapOf(
-            "Vet Clinic" to "veterinary care",
-            "Shelter" to "animal shelter",
-            "Pet Store" to "pet store"
-        )
-        val query = when (service) {
-            "Any" -> serviceToQuery.values.joinToString(" AND ")
-            else -> serviceToQuery[service] ?: service
-        }
+            val serviceToQuery = mapOf(
+                "Vet Clinic" to "veterinary care",
+                "Shelter" to "animal shelter",
+                "Pet Store" to "pet store"
+            )
+            val query = when (service) {
+                "Any" -> serviceToQuery.values.joinToString(" AND ")
+                else -> serviceToQuery[service] ?: service
+            }
 
-        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-            try {
-                val location = fusedLocationClient.lastLocation.await()
-                if (location != null) {
-                    val searchHelper = ServiceSearchHelper(
-                        LatLng(location.latitude, location.longitude),
-                        query
-                    )
-                    searchHelper.findPlaces { places ->
-                        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                            if (places.isEmpty()) {
-                                showToast("No places found for $service")
-                            } else {
-                                updateMapMarkers(places)
+            viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+                try {
+                    val location = fusedLocationClient.lastLocation.await()
+                    if (location != null) {
+                        val searchHelper = ServiceSearchHelper(
+                            LatLng(location.latitude, location.longitude),
+                            query
+                        )
+                        searchHelper.findPlaces { places ->
+                            viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                                if (places.isEmpty()) {
+                                    showToast("No places found for $service")
+                                } else {
+                                    updateMapMarkers(places)
+                                }
                             }
                         }
+                    } else {
+                        withContext(Dispatchers.Main) {
+                            showToast("Unable to get current location")
+                        }
                     }
-                } else {
+                } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
-                        showToast("Unable to get current location")
+                        showToast("Error: ${e.message}")
                     }
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    showToast("Error: ${e.message}")
                 }
             }
         }
     }
 
-
     private fun updateMapMarkers(places: List<SearchResult>) {
-        googleMap.clear()
-        val boundsBuilder = LatLngBounds.Builder()
-        places.forEach { place ->
-            googleMap.addMarker(
-                MarkerOptions()
+        if (isAdded && context != null) {
+            googleMap.clear()
+            val boundsBuilder = LatLngBounds.Builder()
+            places.forEach { place ->
+                // Use the getCustomIcon method to set a custom icon for each marker
+                val markerOptions = MarkerOptions()
                     .position(place.location)
                     .title(place.name)
                     .snippet(place.address)
-            )?.let { boundsBuilder.include(it.position) }
-        }
-        if (places.isNotEmpty()) {
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 100))
+
+                googleMap.addMarker(markerOptions)?.let { boundsBuilder.include(it.position) }
+            }
+            if (places.isNotEmpty()) {
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 100))
+            }
         }
     }
+
 
     private fun getCustomIcon(resourceId: Int, width: Int, height: Int): BitmapDescriptor {
         val drawable = ContextCompat.getDrawable(requireContext(), resourceId)!!
@@ -264,7 +279,9 @@ class CatmapFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun showToast(message: String) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+        if (isAdded && context != null) {
+            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onPause() {
