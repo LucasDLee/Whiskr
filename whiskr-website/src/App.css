@@ -81,12 +81,20 @@ a {
   line-height: 2.25rem;
 }
 
-.featureGrid, .teamGrid {
+.featureGrid, .teamGrid, .teamTasks {
   border: var(--featureColor);
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1.25em;
   margin: 0 2.5em;
+}
+
+.teamTasks {
+  margin-top: 1em;
+}
+
+.featureGrid {
+  row-gap: 5em;
 }
 
 .featureGridMax {
@@ -206,7 +214,7 @@ a {
 .teamCard>img {
   box-shadow: 0px 0px 2.5px black;
   border-radius: 50% 20% / 15% 40%;
-  height: 550px;
+  height: 525px;
   width: 400px;
 }
 
@@ -224,4 +232,41 @@ a {
   display: flex;
   flex-direction: column;
   gap: 0.5em;
+}
+
+.diagramsSection {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.diagramsSection>div {
+  margin-top: 2.5em;
+  text-align: center;
+}
+
+.diagramsSection>div:first-of-type {
+  margin-top: 5em;
+}
+
+.diagramsSection img {
+  box-shadow: 0px 0px 2.5px black;
+  border: solid 1px black;
+  max-width: 1000px;
+}
+
+.whoDidWhatSection {
+  margin-top: 2.5em;
+}
+
+.personTask {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.personTask>div {
+  text-align: center;
 }
