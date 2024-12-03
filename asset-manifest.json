@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/Whiskr/static/css/main.95784a96.css",
-    "main.js": "/Whiskr/static/js/main.089f1e7e.js",
+    "main.js": "/Whiskr/static/js/main.8b1c2f3c.js",
     "static/js/453.af7d0b08.chunk.js": "/Whiskr/static/js/453.af7d0b08.chunk.js",
     "static/media/Whiskr.apk": "/Whiskr/static/media/Whiskr.3aaa0417f131f12f9cde.apk",
     "static/media/lucas.jpg": "/Whiskr/static/media/lucas.5c17375c1e8ae018642a.jpg",
@@ -14,12 +14,11 @@
     "static/media/github.webp": "/Whiskr/static/media/github.ca5e01895c26e9151817.webp",
     "index.html": "/Whiskr/index.html",
     "main.95784a96.css.map": "/Whiskr/static/css/main.95784a96.css.map",
-    "main.089f1e7e.js.map": "/Whiskr/static/js/main.089f1e7e.js.map",
-    "453.af7d0b08.chunk.js.map": "/Whiskr/static/js/453.af7d0b08.chunk.js.map",
-    "Whiskr.apk": "/Whiskr/Whiskr.apk"
+    "main.8b1c2f3c.js.map": "/Whiskr/static/js/main.8b1c2f3c.js.map",
+    "453.af7d0b08.chunk.js.map": "/Whiskr/static/js/453.af7d0b08.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.95784a96.css",
-    "static/js/main.089f1e7e.js"
+    "static/js/main.8b1c2f3c.js"
   ]
 }
