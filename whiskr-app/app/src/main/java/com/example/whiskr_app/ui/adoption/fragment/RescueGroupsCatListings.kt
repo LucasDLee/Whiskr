@@ -27,10 +27,9 @@ class RescueGroupsCatListings : Fragment() {
     private lateinit var catAdapter: CatListAdapter
     private lateinit var viewModel: RescueGroupsViewModel
     private lateinit var emptyView: TextView
-    private lateinit var selectProvince: String
-    private lateinit var selectAgeGroup: List<String>
-    private lateinit var selectSex: List<String>
-
+    private var selectProvince: String = ""
+    private var selectAgeGroup: List<String> = listOf()
+    private var selectSex: List<String> = listOf()
     private var switchState = false
     private var postalCode = " "
 
@@ -55,7 +54,7 @@ class RescueGroupsCatListings : Fragment() {
 
         // Restore saved state
         if (savedInstanceState != null) {
-            val restoredProvince = savedInstanceState.getString("selectedProvince")
+            val restoredProvince = savedInstanceState.getString("selectedProvince", "")
             val restoredAgeGroup = savedInstanceState.getStringArrayList("selectedAgeGroup")
             val restoredSexes = savedInstanceState.getStringArrayList("selectedSexGroup")
             val restoredPostalCode = savedInstanceState.getString("postalCode", " ")
