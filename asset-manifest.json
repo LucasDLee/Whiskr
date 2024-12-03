@@ -15,7 +15,8 @@
     "index.html": "/Whiskr/index.html",
     "main.95784a96.css.map": "/Whiskr/static/css/main.95784a96.css.map",
     "main.089f1e7e.js.map": "/Whiskr/static/js/main.089f1e7e.js.map",
-    "453.af7d0b08.chunk.js.map": "/Whiskr/static/js/453.af7d0b08.chunk.js.map"
+    "453.af7d0b08.chunk.js.map": "/Whiskr/static/js/453.af7d0b08.chunk.js.map",
+    "Whiskr.apk": "/Whiskr/Whiskr.apk"
   },
   "entrypoints": [
     "static/css/main.95784a96.css",
