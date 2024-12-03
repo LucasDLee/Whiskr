@@ -80,12 +80,9 @@ class CatbotFragment : Fragment() {
 
         // Observe chat sections and update the UI
         chatViewModel.chatTitles.observe(viewLifecycleOwner) { titles ->
-            if (titles != null && titles.isNotEmpty()) {
-                val chatSections = titles.map { ChatSection(it.key, it.value) }
-                parentListAdapter = ParentListAdapter(requireContext(), chatSections)
-                allChatMessages.adapter = parentListAdapter
-
-            }
+            val chatSections = titles?.map { ChatSection(it.key, it.value) } ?: emptyList()
+            parentListAdapter = ParentListAdapter(requireContext(), chatSections)
+            allChatMessages.adapter = parentListAdapter
         }
 
         // Load the chat sections from the database
