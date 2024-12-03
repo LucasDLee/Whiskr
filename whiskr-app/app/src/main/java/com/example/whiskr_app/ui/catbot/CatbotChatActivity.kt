@@ -84,6 +84,7 @@ class CatbotChatActivity : AppCompatActivity() {
             if (userMessage.isNotBlank()) {
                 // Add the user's message
                 chatViewModel.addMessageToChat(chatId, userMessage, isUser = true)
+                chatViewModel.loadMessagesForChat(chatId)
                 generateBotResponse(chatId, userMessage)
                 editText.text.clear()
             }
@@ -245,9 +246,14 @@ class CatbotChatActivity : AppCompatActivity() {
                 return "Failed to fetch the updated message."
             }
 
+            // Let the user know we're thinking
+//            withContext(Dispatchers.Main) {
+//                Toast.makeText(this@CatbotChatActivity, "Generating Catbot response...", Toast.LENGTH_SHORT).show()
+//            }
+
             // Wait before trying again
             delay(delayMillis)
-            Toast.makeText(this, "Generating Catbot response...", Toast.LENGTH_SHORT).show()
+
         }
 
         return "CatBot update timed out after ${maxRetries} attempts."

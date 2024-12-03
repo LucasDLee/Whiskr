@@ -259,7 +259,7 @@ class CatbotFragment : Fragment() {
             val chatTitleTextEdit = view.findViewById<ImageView>(R.id.edit_chat_name)
 
             // Set up long-press event for selection
-            view.setOnLongClickListener {
+            chatTitleText.setOnLongClickListener {
                 if (selectedChatIds.contains(section.chatId)) {
                     selectedChatIds.remove(section.chatId) // Deselect chat
                     view.setBackgroundColor(context.getColor(android.R.color.transparent))
