@@ -8,51 +8,52 @@
     android:layout_margin="16dp"
     tools:context=".ui.catbot.CatbotFragment">
 
-
     <ListView
         android:id="@+id/catbot_all_chats"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:paddingBottom="72dp"
         android:clipToPadding="false"
+        android:paddingBottom="72dp"
         android:stackFromBottom="false"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_new_chat"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="24dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="24dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/icon_start_new_chat"
-        app:maxImageSize="24dp"
-        android:contentDescription="Start New Chat"
-        app:tint="@null"
-        app:backgroundTint="@color/orange"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/sign_out_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sign Out"
         android:layout_margin="8dp"
+        android:text="Sign Out"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/deleteButton"
+        app:layout_constraintStart_toStartOf="parent"
         tools:ignore="MissingConstraints" />
+
     <Button
         android:id="@+id/deleteButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:text="Delete Chat"
         android:visibility="visible"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/fab_new_chat"
         app:layout_constraintStart_toEndOf="@id/sign_out_button" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_new_chat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:contentDescription="Start New Chat"
+        android:src="@drawable/icon_start_new_chat"
+        app:backgroundTint="@color/orange"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/deleteButton"
+        app:maxImageSize="24dp"
+        app:tint="@null" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

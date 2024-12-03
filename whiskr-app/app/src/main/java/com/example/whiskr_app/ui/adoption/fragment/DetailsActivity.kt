@@ -17,6 +17,7 @@ import com.example.whiskr_app.ui.adoption.adapter.CatPictureAdapter
 import com.example.whiskr_app.ui.adoption.model.AnimalData
 import com.example.whiskr_app.ui.adoption.model.IncludedItem
 import com.example.whiskr_app.ui.adoption.model.OrganizationAttributes
+import androidx.core.text.HtmlCompat
 
 class DetailsActivity : AppCompatActivity() {
     private lateinit var adoptNowButton: Button
@@ -73,7 +74,7 @@ class DetailsActivity : AppCompatActivity() {
         )
         pictureSlider.adapter = CatPictureAdapter(imageUrls)
 
-        val descriptionText = animalData.attributes.descriptionText
+        val descriptionText = decodeHtmlEntities(animalData.attributes.descriptionText.toString())
         if (descriptionText.isNullOrEmpty()) {
             description.text = "No Description Available"
         } else {
@@ -84,6 +85,13 @@ class DetailsActivity : AppCompatActivity() {
         adoptNowButton.setOnClickListener {
             showAdoptionDialog(organization!!)
         }
+    }
+
+    /**
+     * Helper function converts text to HTML. Used to handle API
+     */
+    private fun decodeHtmlEntities(input: String): String {
+        return HtmlCompat.fromHtml(input, HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
     }
 
     /**

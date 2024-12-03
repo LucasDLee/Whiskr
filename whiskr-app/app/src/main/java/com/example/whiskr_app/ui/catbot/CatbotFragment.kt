@@ -4,12 +4,14 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
@@ -113,7 +115,7 @@ class CatbotFragment : Fragment() {
                     .setNegativeButton("Cancel", null)
                     .show()
             } else {
-                Toast.makeText(requireContext(), "Long press the chat to select.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Hold down a chat to select for deletion.", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -254,6 +256,8 @@ class CatbotFragment : Fragment() {
             val chatTitleText = view.findViewById<TextView>(R.id.catbot_chats_title)
             chatTitleText.text = section.title
 
+            val chatTitleTextEdit = view.findViewById<ImageView>(R.id.edit_chat_name)
+
             // Set up long-press event for selection
             view.setOnLongClickListener {
                 if (selectedChatIds.contains(section.chatId)) {
@@ -269,7 +273,7 @@ class CatbotFragment : Fragment() {
             }
 
             // Set up regular click event
-            view.setOnClickListener {
+            chatTitleText.setOnClickListener {
                 if (selectedChatIds.isNotEmpty()) {
                     // In selection mode, clicking toggles selection
                     if (selectedChatIds.contains(section.chatId)) {
@@ -290,7 +294,10 @@ class CatbotFragment : Fragment() {
                 }
             }
 
-
+            // Set up edit title button
+            chatTitleTextEdit.setOnClickListener {
+                editChatDialog(section.chatId, section.title)
+            }
 
             return view
         }
@@ -312,6 +319,53 @@ class CatbotFragment : Fragment() {
         val params = listView.layoutParams
         params.height = totalHeight + (listView.dividerHeight * (listAdapter.count - 1))
         listView.layoutParams = params
+    }
+
+    /**
+     * Displays the dialog for the user to edit their chat title
+     */
+    private fun editChatDialog(chatId: String, currentTitle: String) {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Edit Chat Title")
+
+        val input = EditText(requireContext())
+        input.setText(currentTitle)
+        input.hint = "Enter new chat title"
+        builder.setView(input)
+
+        builder.setPositiveButton("Save") { _, _ ->
+            val newChatTitle = input.text.toString().trim()
+            if (newChatTitle.isNotEmpty()) {
+                updateChatTitle(chatId, newChatTitle)
+                Toast.makeText(requireContext(), "Chat title updated.", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), "Chat title cannot be empty.", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        builder.setNegativeButton("Cancel") { dialog, _ ->
+            dialog.cancel()
+        }
+
+        builder.show()
+    }
+
+    /**
+     * Changes the chat title in the app and Firebase
+     */
+    fun updateChatTitle(chatId: String, newTitle: String) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val db = FirebaseFirestore.getInstance()
+
+        val chatRef = db.collection("users").document(userId).collection("chats").document(chatId)
+        chatRef.update("title", newTitle)
+            .addOnSuccessListener {
+                // Reload chat sections to reflect the changes
+                chatViewModel.loadChatSections()
+            }
+            .addOnFailureListener { e ->
+                Log.e("ChatViewModel", "Failed to update chat title: ${e.message}")
+            }
     }
 
     /**
