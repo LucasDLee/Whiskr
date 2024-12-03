@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ListView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.whiskr_app.R
@@ -246,6 +247,7 @@ class CatbotChatActivity : AppCompatActivity() {
 
             // Wait before trying again
             delay(delayMillis)
+            Toast.makeText(this, "Generating Catbot response...", Toast.LENGTH_SHORT).show()
         }
 
         return "CatBot update timed out after ${maxRetries} attempts."

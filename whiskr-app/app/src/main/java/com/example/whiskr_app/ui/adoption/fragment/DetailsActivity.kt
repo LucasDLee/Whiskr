@@ -17,6 +17,7 @@ import com.example.whiskr_app.ui.adoption.adapter.CatPictureAdapter
 import com.example.whiskr_app.ui.adoption.model.AnimalData
 import com.example.whiskr_app.ui.adoption.model.IncludedItem
 import com.example.whiskr_app.ui.adoption.model.OrganizationAttributes
+import androidx.core.text.HtmlCompat
 
 class DetailsActivity : AppCompatActivity() {
     private lateinit var adoptNowButton: Button
@@ -73,7 +74,7 @@ class DetailsActivity : AppCompatActivity() {
         )
         pictureSlider.adapter = CatPictureAdapter(imageUrls)
 
-        val descriptionText = animalData.attributes.descriptionText
+        val descriptionText = decodeHtmlEntities(animalData.attributes.descriptionText.toString())
         if (descriptionText.isNullOrEmpty()) {
             description.text = "No Description Available"
         } else {
@@ -86,6 +87,16 @@ class DetailsActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Helper function converts text to HTML. Used to handle API
+     */
+    private fun decodeHtmlEntities(input: String): String {
+        return HtmlCompat.fromHtml(input, HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
+    }
+
+    /**
+     * Builds the adoption dialog when a user chooses a cat to adopt
+     */
     private fun showAdoptionDialog(organization: OrganizationAttributes) {
         val dialogBuilder = AlertDialog.Builder(this)
 
@@ -121,6 +132,9 @@ class DetailsActivity : AppCompatActivity() {
         dialogBuilder.create().show()
     }
 
+    /**
+     * Generates the image for each cat from the API
+     */
     private fun getImagesFromIncludedItem(
         includedData: ArrayList<IncludedItem>?,
         pictureListId: ArrayList<String>
@@ -138,6 +152,9 @@ class DetailsActivity : AppCompatActivity() {
         return imageOriginalUrlList
     }
 
+    /**
+     * Formats the organization's details from the API
+     */
     private fun createOrganizationDetails(
         includedData: ArrayList<IncludedItem>?,
         organizationId: String

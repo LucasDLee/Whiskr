@@ -22,6 +22,7 @@
         tools:targetApi="33">
         <activity
             android:name=".MainActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:exported="true"
             >
             <intent-filter>
@@ -37,7 +38,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="PASTE GMAPS API KEY HERE"/>
+            android:value="AIzaSyBZ0DT2nirbxUwuK-nemjXtsUAwnPZE_Sk"/>
 
     </application>
 

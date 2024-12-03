@@ -12,9 +12,9 @@
         android:layout_height="wrap_content"
         android:background="@color/primary"
         android:padding="8dp"
-        app:navigationIcon="@drawable/icon_arrow_back"
         app:contentInsetStartWithNavigation="0dp"
-        tools:ignore="MissingConstraints" >
+        app:navigationIcon="@drawable/icon_arrow_back"
+        tools:ignore="MissingConstraints">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -26,18 +26,18 @@
                 android:id="@+id/toolbar_title_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:contentDescription="App Title Icon"
-                android:src="@drawable/icon_app_name"
+                android:layout_gravity="center"
                 android:layout_marginRight="@dimen/fab_margin"
-                android:layout_gravity="center"/>
+                android:contentDescription="App Title Icon"
+                android:src="@drawable/icon_app_name" />
 
             <TextView
                 android:id="@+id/toolbar_subtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:fontFamily="sans-serif"
                 android:layout_marginRight="@dimen/fab_margin"
+                android:fontFamily="sans-serif"
                 android:text="Adopt your cute feline friend now!"
                 android:textColor="@color/light_orange"
                 android:textSize="14sp" />
@@ -45,43 +45,46 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <LinearLayout
-        android:layout_width="414dp"
-        android:layout_height="684dp"
-        android:orientation="vertical"
-        android:padding="16dp"
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/AppBar">
+        app:layout_constraintTop_toBottomOf="@+id/AppBar">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/detailsPictureSlide"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:background="@drawable/rounded_recyclerview_background"
-            android:orientation="horizontal"
-            android:scrollbars="horizontal" />
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/AppBar">
 
-        <Button
-            android:id="@+id/button_adopt_now"
-            android:layout_width="151dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginTop="16dp"
-            android:backgroundTint="@color/orange"
-            android:text="Adopt Now!"
-            android:textColor="@android:color/white" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/detailsPictureSlide"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/rounded_recyclerview_background"
+                android:orientation="horizontal"
+                android:scrollbars="horizontal" />
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:fillViewport="true">
+            <Button
+                android:id="@+id/button_adopt_now"
+                android:layout_width="151dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/orange"
+                android:text="Adopt Now!"
+                android:textColor="@android:color/white" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:orientation="vertical">
 
 
@@ -98,12 +101,10 @@
                     android:id="@+id/fragmentDetailsDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Description"
+                    android:text="Description Content"
                     android:textColor="@android:color/black"
                     android:textSize="16sp" />
             </LinearLayout>
-        </ScrollView>
-
-    </LinearLayout>
-
+        </LinearLayout>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

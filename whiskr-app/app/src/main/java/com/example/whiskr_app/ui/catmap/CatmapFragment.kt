@@ -78,6 +78,9 @@ class CatmapFragment : Fragment(), OnMapReadyCallback {
         return root
     }
 
+    /**
+     * Attach variables to fragment UI
+     */
     private fun setupUI(root: View) {
         serviceSpinner = root.findViewById(R.id.spinner_filter)
         findButton = root.findViewById(R.id.button_find)
@@ -93,12 +96,18 @@ class CatmapFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
+    /**
+     * Initialize map
+     */
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
         enableMyLocation()
         setupMapListeners()
     }
 
+    /**
+     * Set the user's location
+     */
     @SuppressLint("MissingPermission")
     private fun enableMyLocation() {
         if (isAdded && context != null && ContextCompat.checkSelfPermission(
@@ -116,6 +125,9 @@ class CatmapFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
+    /**
+     * Create the navigation UI
+     */
     private fun showBottomSheetDialog(marker: Marker) {
         if (isAdded && context != null) {
             val bottomSheetDialog = BottomSheetDialog(requireContext())
@@ -140,6 +152,9 @@ class CatmapFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
+    /**
+     * Helper function to connect the navigation UI to each marker
+     */
     private fun setupMapListeners() {
         googleMap.setOnMarkerClickListener { marker ->
             showBottomSheetDialog(marker)
@@ -147,6 +162,9 @@ class CatmapFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
+    /**
+     * Initialize the user's location
+     */
     @SuppressLint("MissingPermission")
     private fun startLocationUpdates() {
         val locationRequest = LocationRequest.create().apply {
@@ -160,7 +178,9 @@ class CatmapFragment : Fragment(), OnMapReadyCallback {
                 super.onLocationResult(locationResult)
                 locationResult.lastLocation.let {
                     if (isAdded) {
-                        updateUserLocationMarker(LatLng(it.latitude, it.longitude))
+                        if (it != null) {
+                            updateUserLocationMarker(LatLng(it.latitude, it.longitude))
+                        }
                     }
                 }
             }
@@ -169,6 +189,9 @@ class CatmapFragment : Fragment(), OnMapReadyCallback {
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
     }
 
+    /**
+     * Set the user's location
+     */
     private fun updateUserLocationMarker(latLng: LatLng) {
         if (isAdded && context != null) {
             val customIcon = getCustomIcon(R.drawable.current_location_icon, 48, 48)
@@ -187,6 +210,9 @@ class CatmapFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
+    /**
+     * Sets up the list of places the user can find
+     */
     private fun setupServiceSpinner() {
         if (isAdded && context != null) {
             val serviceOptions = resources.getStringArray(R.array.filter_options)
@@ -196,6 +222,9 @@ class CatmapFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
+    /**
+     * Look for nearby locations based on your search query
+     */
     @SuppressLint("MissingPermission")
     private fun searchNearby(service: String) {
         if (isAdded && context != null) {
@@ -249,6 +278,9 @@ class CatmapFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
+    /**
+     * Display the search locations via markers
+     */
     private fun updateMapMarkers(places: List<SearchResult>) {
         if (isAdded && context != null) {
             googleMap.clear()
