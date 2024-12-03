@@ -1,6 +1,7 @@
 import { ResourceButton } from "./ResourceButton"
 import githubIcon from "../images/github.webp"
 import androidStudioIcon from "../images/android_studio_icon.png"
+import apk from "../assets/Whiskr.apk"
 
 export const About = () => {
 
@@ -9,7 +10,7 @@ export const About = () => {
       description: "Want to see a demo of our app? Check out our APK!",
       download: true,
       icon: androidStudioIcon,
-      link: "",
+      link: apk,
       title: "Download our APK"
     },
     {
