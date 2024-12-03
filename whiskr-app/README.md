@@ -5,3 +5,5 @@ Please limit your usage of the chatbot. I only have a fixed set of AI spending i
 Don't worry though if you do go over the limit. The AI spending isn't attached to my credit card or anything like that so I won't get charged.
 
 There's also an issue when signing into the app. At rare instances, if I sign into the chatbot section of the app, it'll crash. However, when I return to the chatbot screen, we will be signed into the chatbot section even though the crash was supposed to stop our data from being processed. We've looked into this and it seems like there's an issue with how Firebase handles user authentication meaning we can't do much unless Firebase updates its libraries.
+
+Additionally, don't worry if you can't run the app. There's this file called "google-services.json" that connects to our Firebase database that needs to stay hidden as it has a bunch of sensitive data that may interfere with storing our users for the chatbot.
