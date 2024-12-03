@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("com.google.gms.google-services")
+    id("org.jetbrains.kotlin.plugin.parcelize")
 }
 
 android {
@@ -52,7 +54,32 @@ dependencies {
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.core:core:1.15.0")
     implementation("com.google.android.gms:play-services-maps:19.0.0")
+    implementation("com.google.android.gms:play-services-maps:17.0.0")
+    implementation(platform("com.google.firebase:firebase-bom:33.6.0"))
+    implementation ("com.google.firebase:firebase-firestore:24.7.1")
+    implementation ("com.google.firebase:firebase-auth:23.1.0")
+    implementation ("com.firebaseui:firebase-ui-auth:8.0.2")
+    implementation("com.google.firebase:firebase-analytics-ktx")
+    implementation ("com.google.android.gms:play-services-location:18.0.0")
+
+
+    implementation(libs.androidx.room.common)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.firebase.auth.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation(libs.okhttp)
+
+    // Rescuegroups.org API Helpers
+    // Retrofit - For faster implementation of HTTPS requests and responses
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
 }
+
+apply(plugin = "com.google.gms.google-services")

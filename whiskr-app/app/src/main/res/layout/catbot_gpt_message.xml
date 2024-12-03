@@ -1,12 +1,14 @@
-<!-- res/layout/list_item.xml -->
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="start"
+    android:padding="8dp">
 
     <ImageView
-        android:background="@color/catbot_message_icon"
+        android:background="@color/light_orange"
         android:src="@drawable/icon_catbot"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -14,10 +16,14 @@
         android:padding="5dp"/>
 
     <TextView
-        android:background="@color/primary"
-        android:layout_margin="5dp"
+        android:id="@+id/catbot_bot_message"
+        android:background="@color/orange"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="100dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Message" />
+        android:textColor="@color/white"
+        android:padding="12dp"
+        android:textSize="16sp"/>
 
 </LinearLayout>

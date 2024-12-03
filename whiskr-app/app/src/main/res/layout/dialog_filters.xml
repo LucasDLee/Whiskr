@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/dialogTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select Filters"
+            android:textSize="18sp"
+            android:paddingBottom="8dp"
+            />
+
+        <TextView
+            android:id="@+id/dialogTextError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="error"
+            android:textColor="@color/red_error"
+            android:visibility="gone"
+            />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/dialogFilterSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Filter by Province or Postal Code"
+            />
+
+        <TextView
+            android:id="@+id/dialogPostalCodeTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Enter Postal Code"
+            android:paddingTop="8dp"
+            android:textSize="16sp"
+            android:visibility="gone"/>
+
+        <EditText
+            android:id="@+id/postalCodeEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Enter Postal Code"
+            android:visibility="gone"
+            android:inputType="text" />
+
+        <TextView
+            android:id="@+id/dialogProvinceTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select Province"
+            android:paddingTop="8dp"
+            android:textSize="16sp"/>
+
+        <Spinner
+            android:id="@+id/provinceSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/dialogSexTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select Sex"
+            android:paddingTop="16dp"
+            android:textSize="16sp"/>
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="2"
+            >
+            <CheckBox
+                android:id="@+id/filterGroupFemale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Female"/>
+            <CheckBox
+                android:id="@+id/filterGroupMale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Male"/>
+
+        </GridLayout>
+
+        <TextView
+            android:id="@+id/dialogFiltersTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select Age Group"
+            android:paddingTop="16dp"
+            android:textSize="16sp"/>
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="4"
+            >
+            <CheckBox
+                android:id="@+id/filterAgeGroupBaby"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Baby"/>
+            <CheckBox
+                android:id="@+id/filterAgeGroupYoung"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Young"/>
+            <CheckBox
+                android:id="@+id/filterAgeGroupAdult"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Adult"/>
+            <CheckBox
+                android:id="@+id/filterAgeGroupSenior"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Senior"/>
+        </GridLayout>
+
+
+        <Button
+            android:id="@+id/dialogCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:layout_marginTop="16dp"/>
+
+        <Button
+            android:id="@+id/dialogOk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OK"
+            android:layout_marginTop="8dp"/>
+
+
+    </LinearLayout>
+</ScrollView>
